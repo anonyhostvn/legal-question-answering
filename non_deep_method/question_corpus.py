@@ -44,4 +44,12 @@ class QuestionCorpus:
         cosine_uni_tfidf = self.uni_tfidf_cosine[ques_idx][corpus_idx]
         cosine_bi_tfidf = self.bi_tfidf_cosine[ques_idx][corpus_idx]
         j_score = jaccard_score(self.uni_ques[ques_idx], self.legal_corpus.uni_corpus[corpus_idx])
-        return np.array([cosine_uni_tfidf, cosine_bi_tfidf, j_score])
+        basic_features = np.array([cosine_uni_tfidf, cosine_bi_tfidf, j_score])
+        word_embed_features = np.concatenate(
+            (self.get_w_avg_word_emb(ques_idx),
+             self.legal_corpus.get_w_avg_word_emb(corpus_idx)), dim=0)
+        combine_features = np.concatenate((basic_features, word_embed_features), dim=0)
+        return combine_features
+
+
+
