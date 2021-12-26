@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from non_deep_method.config import FT_EMBED_DIM, ESP, CACHE_DIR
 
-vn_word_emb = KeyedVectors.load_word2vec_format('/Users/LongNH/Workspace/ZaloAIChallenge/large_files/vn.wiki.vi.vec',
+vn_word_emb = KeyedVectors.load_word2vec_format('/Users/LongNH/Workspace/ZaloAIChallenge/large_files/cc.vi.300.vec',
                                                 binary=False)
 
 
@@ -18,10 +18,9 @@ def get_wavg_word_emb_with_cached(tfidf_score, vocab, cached_filename):
 
     wavg_vect = np.zeros(shape=(FT_EMBED_DIM,), dtype=float)
     sum_w = 0
-    for wid, tfidf_score in enumerate(tfidf_score):
-        if tfidf_score > 0:
-            wavg_vect += vn_word_emb.get_vector(vocab[wid]) * tfidf_score
-            sum_w += tfidf_score
+    for wid in tfidf_score.nonzero()[1]:
+        wavg_vect += vn_word_emb.get_vector(vocab[wid]) * tfidf_score[0, wid]
+        sum_w += tfidf_score
     wavg_vect /= (sum_w + ESP)
     np.save(cached_file_path, wavg_vect)
     return wavg_vect
@@ -41,6 +40,17 @@ def transform_seg2uni(segmented_data):
     uni_corpus = [' '.join([' '.join(sent) for sent in article]) for article in tqdm(segmented_data)]
     return uni_corpus
 
+
+def jaccard_similarity(list1, list2):
+    s1 = set(list1)
+    s2 = set(list2)
+    return float(len(s1.intersection(s2)) / len(s1.union(s2)))
+
+
+#
+# list1 = ['dog', 'cat', 'cat', 'rat']
+# list2 = ['dog', 'cat', 'mouse']
+# jaccard_similarity(list1, list2)
 
 if __name__ == '__main__':
     print('Start')
