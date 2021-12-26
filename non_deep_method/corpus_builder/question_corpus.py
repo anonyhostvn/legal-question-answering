@@ -5,9 +5,8 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 from non_deep_method.config import CACHE_DIR
-from non_deep_method.legal_corpus import LegalCorpus
-from non_deep_method.utils import transform_seg2bi, transform_seg2uni, get_wavg_word_emb_with_cached
-from utils import jaccard_similarity
+from non_deep_method.corpus_builder.legal_corpus import LegalCorpus
+from non_deep_method.utilities.utils import transform_seg2bi, transform_seg2uni, get_wavg_word_emb_with_cached, jaccard_similarity
 
 
 class QuestionCorpus:
@@ -55,14 +54,14 @@ class QuestionCorpus:
 
 if __name__ == '__main__':
     l_corpus = LegalCorpus(
-        corpus_json_path='/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/legal_corpus.json',
-        corpus_segmented_path='/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/segmented_corpus.json',
+        corpus_json_path='/zac2021-ltr-data/legal_corpus.json',
+        corpus_segmented_path='/segemented_data/segmented_corpus.json',
         sample_size=100
     )
 
     q_corpus = QuestionCorpus(
-        ques_json_path='/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/train_question_answer.json',
-        ques_segmented_path='/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/train_ques_segmented.json',
+        ques_json_path='/zac2021-ltr-data/train_question_answer.json',
+        ques_segmented_path='/segemented_data/train_ques_segmented.json',
         phase='train',
         sample_size=100,
         legal_corpus=l_corpus

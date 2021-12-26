@@ -2,8 +2,8 @@ import json
 import os
 
 from non_deep_method.config import LOAD_SAMPLE_SIZE, CACHE_DIR
-from non_deep_method.tfidf_machine import TfIdfMachine
-from non_deep_method.utils import transform_seg2uni, transform_seg2bi, get_wavg_word_emb_with_cached
+from non_deep_method.utilities.tfidf_machine import TfIdfMachine
+from non_deep_method.utilities.utils import transform_seg2uni, transform_seg2bi, get_wavg_word_emb_with_cached
 
 
 class LegalCorpus:
@@ -20,7 +20,7 @@ class LegalCorpus:
         self.uni_corpus = transform_seg2uni(self.segmented_corpus)
         self.uni_tfidf = TfIdfMachine(self.uni_corpus)
         self.uni_vocab = self.uni_tfidf.vectorizer.get_feature_names_out()
-        
+
         print('\n building bi-gram tfidf ...')
         self.bi_corpus = transform_seg2bi(self.segmented_corpus)
         self.bi_tfidf = TfIdfMachine(self.bi_corpus)
@@ -32,8 +32,8 @@ class LegalCorpus:
 
 
 if __name__ == '__main__':
-    CORPUS_PATH = '/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/legal_corpus.json'
-    SEGMENTED_CORPUS_PATH = '/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/segmented_corpus.json'
+    CORPUS_PATH = '/zac2021-ltr-data/legal_corpus.json'
+    SEGMENTED_CORPUS_PATH = '/segemented_data/segmented_corpus.json'
 
     legal_corpus = LegalCorpus(corpus_json_path=CORPUS_PATH,
                                corpus_segmented_path=SEGMENTED_CORPUS_PATH, sample_size=LOAD_SAMPLE_SIZE)
