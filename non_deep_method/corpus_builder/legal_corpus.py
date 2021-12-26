@@ -1,6 +1,7 @@
 import json
 import os
 
+from global_config import LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS
 from non_deep_method.config import LOAD_SAMPLE_SIZE, CACHE_DIR
 from non_deep_method.utilities.tfidf_machine import TfIdfMachine
 from non_deep_method.utilities.utils import transform_seg2uni, transform_seg2bi, get_wavg_word_emb_with_cached
@@ -32,8 +33,5 @@ class LegalCorpus:
 
 
 if __name__ == '__main__':
-    CORPUS_PATH = '/zac2021-ltr-data/legal_corpus.json'
-    SEGMENTED_CORPUS_PATH = '/segemented_data/segmented_corpus.json'
-
-    legal_corpus = LegalCorpus(corpus_json_path=CORPUS_PATH,
-                               corpus_segmented_path=SEGMENTED_CORPUS_PATH, sample_size=LOAD_SAMPLE_SIZE)
+    legal_corpus = LegalCorpus(corpus_json_path=LEGAL_CORPUS_PATH,
+                               corpus_segmented_path=SEGMENTED_LEGAL_CORPUS, sample_size=LOAD_SAMPLE_SIZE)

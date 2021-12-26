@@ -1,13 +1,12 @@
 import os
 
 import numpy as np
-from gensim.models import KeyedVectors
 from tqdm import tqdm
+import fasttext
 
-from non_deep_method.config import FT_EMBED_DIM, ESP, CACHE_DIR
+from non_deep_method.config import FT_EMBED_DIM, ESP, CACHE_DIR, FAST_TEXT_PRETRAINED_PATH
 
-vn_word_emb = KeyedVectors.load_word2vec_format('/Users/LongNH/Workspace/ZaloAIChallenge/large_files/cc.vi.300.vec',
-                                                binary=False)
+vn_word_emb = fasttext.load_model(FAST_TEXT_PRETRAINED_PATH)
 
 
 def get_wavg_word_emb_with_cached(tfidf_score, vocab, cached_filename):
@@ -19,8 +18,8 @@ def get_wavg_word_emb_with_cached(tfidf_score, vocab, cached_filename):
     wavg_vect = np.zeros(shape=(FT_EMBED_DIM,), dtype=float)
     sum_w = 0
     for wid in tfidf_score.nonzero()[1]:
-        wavg_vect += vn_word_emb.get_vector(vocab[wid]) * tfidf_score[0, wid]
-        sum_w += tfidf_score
+        wavg_vect += vn_word_emb.get_word_vector(vocab[wid]) * tfidf_score[0, wid]
+        sum_w += tfidf_score[0, wid]
     wavg_vect /= (sum_w + ESP)
     np.save(cached_file_path, wavg_vect)
     return wavg_vect
