@@ -1,10 +1,9 @@
 import json
+import os
 
-from non_deep_method.config import LOAD_SAMPLE_SIZE
+from non_deep_method.config import LOAD_SAMPLE_SIZE, CACHE_DIR
 from non_deep_method.tfidf_machine import TfIdfMachine
-from tqdm import tqdm
-
-from non_deep_method.utils import transform_seg2uni, transform_seg2bi
+from non_deep_method.utils import transform_seg2uni, transform_seg2bi, get_wavg_word_emb_with_cached
 
 
 class LegalCorpus:
@@ -19,8 +18,14 @@ class LegalCorpus:
 
         print('\n building uni-gram tfidf ... ')
         self.uni_tfidf = TfIdfMachine(transform_seg2uni(self.segmented_corpus))
+        self.uni_vocab = self.uni_tfidf.vectorizer.get_feature_names_out()
         print('\n building bi-gram tfidf ...')
         self.bi_tfidf = TfIdfMachine(transform_seg2bi(self.segmented_corpus))
+
+    def get_w_avg_word_emb(self, idx: int):
+        cached_filename = os.path.join(CACHE_DIR, f'legal_{idx}.wavg_emb.npy')
+        return get_wavg_word_emb_with_cached(tfidf_score=self.uni_tfidf.get_tfidf(idx), vocab=self.uni_vocab,
+                                             cached_filename=cached_filename)
 
 
 if __name__ == '__main__':
