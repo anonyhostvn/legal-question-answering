@@ -2,3 +2,4 @@ LEGAL_CORPUS_PATH = '/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/le
 DATA_QUESTION_PATH = '/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/train_question_answer.json'
 SEGMENTED_LEGAL_CORPUS = '/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/segmented_corpus.json'
 SEGMENTED_DATA_QUESTION = '/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/train_ques_segmented.json'
+SEGMENTED_TEST_QUESTION = '/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/test_ques_segmented.json'
