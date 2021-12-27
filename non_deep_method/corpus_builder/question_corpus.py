@@ -42,8 +42,8 @@ class QuestionCorpus:
                                              cached_filename=cached_filename)
 
     def get_features(self, ques_idx, corpus_idx):
-        cosine_uni_tfidf = self.uni_tfidf_cosine[ques_idx][corpus_idx]
-        cosine_bi_tfidf = self.bi_tfidf_cosine[ques_idx][corpus_idx]
+        cosine_uni_tfidf = self.uni_tfidf_cosine[ques_idx, corpus_idx]
+        cosine_bi_tfidf = self.bi_tfidf_cosine[ques_idx, corpus_idx]
         j_score = jaccard_similarity(self.uni_ques[ques_idx].split(' '),
                                      self.legal_corpus.uni_corpus[corpus_idx].split(' '))
         basic_features = np.array([cosine_uni_tfidf, cosine_bi_tfidf, j_score])
@@ -54,19 +54,19 @@ class QuestionCorpus:
         return combine_features
 
 
+l_corpus = LegalCorpus(
+    corpus_json_path=LEGAL_CORPUS_PATH,
+    corpus_segmented_path=SEGMENTED_LEGAL_CORPUS,
+    sample_size=None
+)
+
+train_q_corpus = QuestionCorpus(
+    ques_json_path=DATA_QUESTION_PATH,
+    ques_segmented_path=SEGMENTED_DATA_QUESTION,
+    phase='train',
+    sample_size=None,
+    legal_corpus=l_corpus
+)
+
 if __name__ == '__main__':
-    l_corpus = LegalCorpus(
-        corpus_json_path=LEGAL_CORPUS_PATH,
-        corpus_segmented_path=SEGMENTED_LEGAL_CORPUS,
-        sample_size=100
-    )
-
-    q_corpus = QuestionCorpus(
-        ques_json_path=DATA_QUESTION_PATH,
-        ques_segmented_path=SEGMENTED_DATA_QUESTION,
-        phase='train',
-        sample_size=100,
-        legal_corpus=l_corpus
-    )
-
-    print(q_corpus.get_features(ques_idx=0, corpus_idx=0).shape)
+    print(train_q_corpus.get_features(ques_idx=0, corpus_idx=0).shape)
