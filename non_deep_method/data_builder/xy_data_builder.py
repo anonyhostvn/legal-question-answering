@@ -43,9 +43,7 @@ class XYDataBuilder:
         x_cached_filename = self.get_cached_filename(top_n=top_n, prefix=prefix, xy='X')
         y_cached_filename = self.get_cached_filename(top_n=top_n, prefix=prefix, xy='y')
         if os.path.exists(x_cached_filename) and os.path.exists(y_cached_filename):
-            X = np.load(x_cached_filename)
-            y = np.load(y_cached_filename)
-            return X, y
+            return np.load(x_cached_filename), np.load(y_cached_filename)
 
         if prefix == 'train_ques':
             with open(TRAIN_IDX, 'r') as f:
