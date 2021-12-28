@@ -24,7 +24,7 @@ class XYDataBuilder:
 
         self.bm25_ranking = bm25_ranking
 
-        self.get_cached_filename = lambda top_n, prefix, xy: os.path.join(CACHE_DIR, f'{prefix}-top_n_{top_n}-{xy}.npy')
+        self.get_cached_filename = lambda top_n, phase, xy: os.path.join(CACHE_DIR, f'{phase}-top_n_{top_n}-{xy}.npy')
 
     def find_i_article(self, law_id, article_id):
         for i_article, article in enumerate(self.lis_legal_article):
@@ -39,16 +39,16 @@ class XYDataBuilder:
             )
         return lis_i_article
 
-    def build_data_with_features(self, top_n, prefix):
-        x_cached_filename = self.get_cached_filename(top_n=top_n, prefix=prefix, xy='X')
-        y_cached_filename = self.get_cached_filename(top_n=top_n, prefix=prefix, xy='y')
+    def build_data_with_features(self, top_n, phase, prefix):
+        x_cached_filename = self.get_cached_filename(top_n=top_n, phase=phase, xy='X')
+        y_cached_filename = self.get_cached_filename(top_n=top_n, phase=phase, xy='y')
         if os.path.exists(x_cached_filename) and os.path.exists(y_cached_filename):
             return np.load(x_cached_filename), np.load(y_cached_filename)
 
-        if prefix == 'train_ques':
+        if phase == 'train_phase':
             with open(TRAIN_IDX, 'r') as f:
                 lis_ques_idx = json.load(f)
-        elif prefix == 'test_ques':
+        elif phase == 'test_phase':
             with open(TEST_IDX, 'r') as f:
                 lis_ques_idx = json.load(f)
 
@@ -69,7 +69,10 @@ class XYDataBuilder:
         return X, y
 
 
+data_builder = XYDataBuilder()
+
 if __name__ == '__main__':
-    data_builder = XYDataBuilder()
-    X, y = data_builder.build_data_with_features(top_n=50, prefix='train_ques')
-    print(X.shape)
+    X_test, y_test = data_builder.build_data_with_features(top_n=50, phase='test_phase', prefix='train_ques')
+    X_train, y_train = data_builder.build_data_with_features(top_n=50, phase='train_phase', prefix='train_ques')
+    print(X_train.shape)
+    print(X_test.shape)
