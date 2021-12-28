@@ -1,7 +1,7 @@
 from tqdm import tqdm
 
 from bm25_ranking.bm25_pre_ranking import bm25_ranking
-from global_config import TRAIN_IDX, TEST_IDX, DATA_QUESTION_PATH, LEGAL_CORPUS_PATH
+from global_config import TRAIN_IDX, TEST_IDX, DATA_QUESTION_PATH, LEGAL_CORPUS_PATH, TEST_QUESTION_PATH
 import json
 
 from non_deep_method.config import CACHE_DIR
@@ -13,7 +13,16 @@ import os
 class XYDataBuilder:
     def __init__(self):
         with open(DATA_QUESTION_PATH, 'r') as f:
-            self.data_question = json.load(f).get('items')
+            data_question = json.load(f).get('items')
+
+        with open(TEST_QUESTION_PATH, 'r') as f:
+            test_question = json.load(f).get('items')
+
+        self.question_cluster = {
+            'train_ques': data_question,
+            'test_ques': test_question
+        }
+
         with open(LEGAL_CORPUS_PATH, 'r') as f:
             self.legal_corpus = json.load(f)
             self.lis_legal_article = [
@@ -31,9 +40,11 @@ class XYDataBuilder:
             if article.get('law_id') == law_id and article.get('article_id') == article_id:
                 return i_article
 
-    def find_relevance_i_article(self, ques_id):
+    def find_relevance_i_article(self, ques_id, prefix):
+        assert prefix in self.question_cluster.keys(), 'prefix cluster is not exist'
+        data_question = self.question_cluster.get(prefix)
         lis_i_article = []
-        for relevance_article in self.data_question[ques_id].get('relevant_articles'):
+        for relevance_article in data_question[ques_id].get('relevant_articles'):
             lis_i_article.append(
                 self.find_i_article(relevance_article.get('law_id'), relevance_article.get('article_id'))
             )
@@ -55,7 +66,7 @@ class XYDataBuilder:
         X = []
         y = []
         for ques_idx in tqdm(lis_ques_idx):
-            lis_i_relevance_article = set(self.find_relevance_i_article(ques_idx))
+            lis_i_relevance_article = set(self.find_relevance_i_article(ques_id=ques_idx, prefix=prefix))
             top_n_relevance_article = set(self.bm25_ranking.get_ranking(query_idx=ques_idx, prefix=prefix, top_n=top_n))
             top_n_relevance_article.update(lis_i_relevance_article)
             for i_relevance in top_n_relevance_article:
