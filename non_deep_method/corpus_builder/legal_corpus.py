@@ -17,12 +17,10 @@ class LegalCorpus:
         with open(corpus_segmented_path, 'r') as f:
             self.segmented_corpus = json.load(f)[:sample_size]
 
-        print('\n building uni-gram tfidf ... ')
         self.uni_corpus = transform_seg2uni(self.segmented_corpus)
         self.uni_tfidf = TfIdfMachine(self.uni_corpus)
         self.uni_vocab = self.uni_tfidf.vectorizer.get_feature_names_out()
 
-        print('\n building bi-gram tfidf ...')
         self.bi_corpus = transform_seg2bi(self.segmented_corpus)
         self.bi_tfidf = TfIdfMachine(self.bi_corpus)
 

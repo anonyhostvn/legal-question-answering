@@ -21,22 +21,21 @@ def get_wavg_word_emb_with_cached(tfidf_score, vocab, cached_filename):
         wavg_vect += vn_word_emb.get_word_vector(vocab[wid]) * tfidf_score[0, wid]
         sum_w += tfidf_score[0, wid]
     wavg_vect /= (sum_w + ESP)
-    np.save(cached_file_path, wavg_vect)
+    # np.save(cached_file_path, wavg_vect)
     return wavg_vect
 
 
 def transform_seg2bi(segmented_data):
     assert segmented_data is not None
-    print('\n building bi corpus ... ')
     bi_corpus = [
         ' '.join([' '.join([f'{sent[i]}_{sent[i + 1]}' for i in range(len(sent) - 1)]) for sent in article])
-        for article in tqdm(segmented_data)]
+        for article in tqdm(segmented_data, desc='building bi corpus')]
     return bi_corpus
 
 
 def transform_seg2uni(segmented_data):
-    print('\n building uni corpus ... ')
-    uni_corpus = [' '.join([' '.join(sent) for sent in article]) for article in tqdm(segmented_data)]
+    uni_corpus = [' '.join([' '.join(sent) for sent in article]) for article in
+                  tqdm(segmented_data, desc='building uni corpus')]
     return uni_corpus
 
 
