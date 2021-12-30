@@ -10,12 +10,14 @@ class ModelBuilder:
     def __init__(self):
         self.clf = []
 
+    def predict_prob(self, X):
+        pred_prob = np.array([single_clf.predict_proba(X=X)[:, 1] for single_clf in self.clf])
+        pred_prob = np.mean(pred_prob, axis=0)
+        return pred_prob
+
     def test(self, X, y):
         # [n_clf * n_sample]
-        pred_prob = np.array([single_clf.predict_proba(X=X)[:, 1] for single_clf in self.clf])
-
-        pred_prob = np.mean(pred_prob, axis=0)
-
+        pred_prob = self.predict_prob(X=X)
         print('roc-auc score one test set: ', roc_auc_score(y_true=y, y_score=pred_prob))
 
     def train_single_model(self, X, y):
@@ -33,7 +35,8 @@ class ModelBuilder:
                                     reg_lambda=0.0735294,
                                     min_split_gain=0.0222415,
                                     min_child_weight=39.3259775,
-                                    verbose=-1
+                                    verbose=-1,
+                                    scale_pos_weight=40
                                     )
         single_clf.fit(x_train, y_train, eval_set=[(x_train, y_train), (x_val, y_val)],
                        callbacks=[early_stopping(stopping_rounds=200), log_evaluation(period=200)],

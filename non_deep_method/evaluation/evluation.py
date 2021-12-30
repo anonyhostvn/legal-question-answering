@@ -8,11 +8,11 @@ import numpy as np
 
 from non_deep_method.data_builder.xy_data_builder import data_builder
 from non_deep_method.evaluation.eval_utils import calculate_f2i
-from non_deep_method.xgb_model.model_builder import model_builder
+from non_deep_method.xgb_model.model_builder import ModelBuilder
 
 
 class Evaluation:
-    def __init__(self, clf: LGBMClassifier):
+    def __init__(self, model_builder):
         with open(TEST_IDX, 'r') as f:
             self.lis_idx = json.load(f)
 
@@ -20,15 +20,14 @@ class Evaluation:
 
         self.xy_data_builder = data_builder
         self.top_n = 50
-        self.clf = clf
+        self.model_builder = model_builder
 
     def predict_lis_article(self, query_idx, lis_article_idx):
         x = np.array([
             self.xy_data_builder.train_q_corpus.get_features(ques_idx=query_idx, corpus_idx=article_idx)
             for article_idx in lis_article_idx
         ])
-        lis_prob = self.clf.predict_proba(X=x)
-        lis_prob = lis_prob[:, 1]
+        lis_prob = self.model_builder.predict_prob(X=x)
         return lis_prob
 
     def cal_candidate_prob(self, query_idx):
@@ -38,7 +37,7 @@ class Evaluation:
 
     def start_evaluate_f2i_score(self):
         truth_candidate_prob = []
-        for query_idx in self.lis_idx:
+        for query_idx in tqdm(self.lis_idx, desc='Start calculating probability'):
             ground_truth_article = self.xy_data_builder.find_relevance_i_article(ques_id=query_idx, prefix='train_ques')
             candidate_article, prob_article = self.cal_candidate_prob(query_idx)
             truth_candidate_prob.append((ground_truth_article, candidate_article, prob_article))
@@ -60,5 +59,13 @@ class Evaluation:
 
 
 if __name__ == '__main__':
-    evaluation_machine = Evaluation(clf=model_builder.clf)
+    top_n = 50
+    train_x, train_y = data_builder.build_data_with_features(top_n=top_n, phase='train_phase',
+                                                             prefix='train_ques')
+    test_x, test_y = data_builder.build_data_with_features(top_n=top_n, phase='test_phase',
+                                                           prefix='train_ques')
+    model_builder = ModelBuilder()
+    model_builder.train_k_fold(X=train_x, y=train_y)
+
+    evaluation_machine = Evaluation(model_builder=model_builder)
     evaluation_machine.start_evaluate_f2i_score()
