@@ -1,7 +1,10 @@
 import json
 
-from finetunning_bert.const import MAX_PHOBERT_SEQ_LENGTH, CORPUS_PATH, BERT_CORPUS_PATH
+from finetunning_bert.const import MAX_PHOBERT_SEQ_LENGTH, CORPUS_PATH, BERT_CORPUS_PATH, TRAIN_IDX_PATH, TEST_IDX_PATH
 from tqdm import tqdm
+import os
+from random import shuffle
+import json
 
 
 class DataPreprocess:
@@ -74,7 +77,26 @@ class DataPreprocess:
             print('OK')
 
 
+def train_test_split_idx(corpus_path, train_idx_path, test_idx_path, test_size=0.2):
+    assert os.path.exists(corpus_path)
+    assert test_size < 1
+    with open(corpus_path, 'r') as corpus_file:
+        samples = corpus_file.readlines()
+    list_idx = list(range(len(samples)))
+    shuffle(list_idx)
+    split_point = int(len(list_idx) * test_size)
+
+    lis_test_idx = list_idx[:split_point]
+    with open(test_idx_path, 'w') as test_idx_file:
+        json.dump(lis_test_idx, test_idx_file)
+
+    lis_train_idx = list_idx[split_point:]
+    with open(train_idx_path, 'w') as train_idx_file:
+        json.dump(lis_train_idx, train_idx_file)
+
+
 if __name__ == '__main__':
-    data_preprocess = DataPreprocess(max_seq_length=MAX_PHOBERT_SEQ_LENGTH)
-    data_preprocess.start_make_bert_corpus(corpus_path=CORPUS_PATH, output_path=BERT_CORPUS_PATH)
-    data_preprocess.test_preprocess(bert_corpus_path=BERT_CORPUS_PATH)
+    # data_preprocess = DataPreprocess(max_seq_length=MAX_PHOBERT_SEQ_LENGTH)
+    # data_preprocess.start_make_bert_corpus(corpus_path=CORPUS_PATH, output_path=BERT_CORPUS_PATH)
+    # data_preprocess.test_preprocess(bert_corpus_path=BERT_CORPUS_PATH)
+    train_test_split_idx(corpus_path=BERT_CORPUS_PATH, train_idx_path=TRAIN_IDX_PATH, test_idx_path=TEST_IDX_PATH)
