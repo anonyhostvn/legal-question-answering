@@ -99,4 +99,5 @@ if __name__ == '__main__':
     # data_preprocess = DataPreprocess(max_seq_length=MAX_PHOBERT_SEQ_LENGTH)
     # data_preprocess.start_make_bert_corpus(corpus_path=CORPUS_PATH, output_path=BERT_CORPUS_PATH)
     # data_preprocess.test_preprocess(bert_corpus_path=BERT_CORPUS_PATH)
-    train_test_split_idx(corpus_path=BERT_CORPUS_PATH, train_idx_path=TRAIN_IDX_PATH, test_idx_path=TEST_IDX_PATH)
+    # train_test_split_idx(corpus_path=BERT_CORPUS_PATH, train_idx_path=TRAIN_IDX_PATH, test_idx_path=TEST_IDX_PATH)
+    pass
