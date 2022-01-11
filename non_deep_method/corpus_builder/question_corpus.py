@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from global_config import LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS, DATA_QUESTION_PATH, SEGMENTED_DATA_QUESTION
 from non_deep_method.config import CACHE_DIR
 from non_deep_method.corpus_builder.legal_corpus import LegalCorpus
-from non_deep_method.utilities.utils import transform_seg2bi, transform_seg2uni, get_wavg_word_emb_with_cached, \
+from utilities.utils import transform_seg2bi, transform_seg2uni, get_wavg_word_emb_with_cached, \
     jaccard_similarity
 
 

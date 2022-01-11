@@ -3,8 +3,8 @@ import os
 
 from global_config import LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS
 from non_deep_method.config import LOAD_SAMPLE_SIZE, CACHE_DIR
-from non_deep_method.utilities.tfidf_machine import TfIdfMachine
-from non_deep_method.utilities.utils import transform_seg2uni, transform_seg2bi, get_wavg_word_emb_with_cached
+from utilities.tfidf_machine import TfIdfMachine
+from utilities.utils import transform_seg2uni, transform_seg2bi, get_wavg_word_emb_with_cached
 
 
 class LegalCorpus:

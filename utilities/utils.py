@@ -45,6 +45,10 @@ def jaccard_similarity(list1, list2):
     return float(len(s1.intersection(s2)) / len(s1.union(s2)))
 
 
+def count_sent_in_article(article):
+    return len([tok for sent in article for tok in sent])
+
+
 #
 # list1 = ['dog', 'cat', 'cat', 'rat']
 # list2 = ['dog', 'cat', 'mouse']
