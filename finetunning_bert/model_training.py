@@ -46,7 +46,7 @@ class ModelTraining:
         is_mask = np.random.binomial(1, self.mlm_prob, (len(input_ids),))
         label = torch.tensor(
             [input_ids[i] if is_mask[i] == 1 and attention_mask[i] == 1 else -100 for i in range(len(input_ids))])
-        return torch.tensor(label)
+        return label
 
     def custom_data_collator(self, encoding_result):
         """
@@ -72,6 +72,10 @@ class ModelTraining:
         return data_tokenize_with_mlm
 
     def start_training(self):
+        device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
+        print('Training on ', device)
+        self.mlm_bert_model = self.mlm_bert_model.to(device)
+
         accelerator = Accelerator()
         model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(
             self.mlm_bert_model, self.optimizer, self.train_dataloader, self.test_dataloader
@@ -92,7 +96,7 @@ class ModelTraining:
                           eval_dataloader=eval_dataloader,
                           eval_dataset=self.test_corpus_dataset,
                           batch_size=self.batch_size, accelerator=accelerator,
-                          optimizer=optimizer, lr_scheduler=lr_scheduler)
+                          optimizer=optimizer, lr_scheduler=lr_scheduler, device=device)
 
 
 if __name__ == '__main__':

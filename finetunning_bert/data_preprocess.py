@@ -1,6 +1,3 @@
-import json
-
-from finetunning_bert.const import MAX_PHOBERT_SEQ_LENGTH, CORPUS_PATH, BERT_CORPUS_PATH, TRAIN_IDX_PATH, TEST_IDX_PATH
 from tqdm import tqdm
 import os
 from random import shuffle

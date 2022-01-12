@@ -5,11 +5,12 @@ import math
 
 def perform_epoch(epoch_id, model, train_dataloader, eval_dataloader,
                   eval_dataset, batch_size, accelerator, optimizer,
-                  lr_scheduler):
+                  lr_scheduler, device):
     # Training
     model.train()
     for batch in tqdm(train_dataloader):
         # temp = batch.pop('token_type_ids')
+        batch = batch.to(device)
         outputs = model(**batch)
         loss = outputs.loss
         accelerator.backward(loss)
