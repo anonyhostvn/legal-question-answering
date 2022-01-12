@@ -18,8 +18,10 @@ from finetunning_bert.training_utilities import perform_epoch
 class ModelTraining:
     def __init__(self, pretrain_name, mlm_prob, tokenizer_name,
                  corpus_path, train_idx_path, test_idx_path,
-                 cut_size=None, batch_size=10):
+                 save_folder, cut_size=None, batch_size=10):
         print('batch size : ', batch_size)
+        print('save folder: ', save_folder)
+        self.save_folder = save_folder
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
         self.mlm_bert_model = AutoModelForMaskedLM.from_pretrained(pretrain_name)
         self.mlm_prob = mlm_prob
@@ -103,10 +105,13 @@ class ModelTraining:
                           batch_size=self.batch_size, accelerator=accelerator,
                           optimizer=optimizer, lr_scheduler=lr_scheduler, device=device)
 
+            model.save_pretrained(self.save_folder)
+
 
 if __name__ == '__main__':
     model_training = ModelTraining(pretrain_name=PRETRAINED_MODEL_NAME, mlm_prob=0.15,
                                    tokenizer_name=PRETRAINED_MODEL_NAME, corpus_path=BERT_CORPUS_PATH,
                                    train_idx_path='train_idx.json',
-                                   test_idx_path='test_idx.json')
+                                   test_idx_path='test_idx.json',
+                                   save_folder='/Users/LongNH/Workspace/ZaloAIChallenge/finetunning_bert/pretrained_model')
     model_training.start_training()
