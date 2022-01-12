@@ -16,17 +16,22 @@ from finetunning_bert.training_utilities import perform_epoch
 
 
 class ModelTraining:
-    def __init__(self, pretrain_name, mlm_prob, tokenizer_name, corpus_path, train_idx_path, test_idx_path,
-                 batch_size=10):
+    def __init__(self, pretrain_name, mlm_prob, tokenizer_name,
+                 corpus_path, train_idx_path, test_idx_path,
+                 cut_size=None, batch_size=10):
+        print('batch size : ', batch_size)
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
         self.mlm_bert_model = AutoModelForMaskedLM.from_pretrained(pretrain_name)
         self.mlm_prob = mlm_prob
         self.batch_size = batch_size
 
         with open(train_idx_path, 'r') as train_idx_file:
-            lis_idx_train = json.load(train_idx_file)
+            lis_idx_train = json.load(train_idx_file)[:cut_size]
         with open(test_idx_path, 'r') as test_idx_file:
-            lis_idx_test = json.load(test_idx_file)
+            lis_idx_test = json.load(test_idx_file)[:cut_size]
+
+        print('Training samples: ', len(lis_idx_train))
+        print('Testing samples: ', len(lis_idx_test))
 
         self.train_corpus_dataset = CorpusDataset(corpus_path=corpus_path, use_idx=lis_idx_train)
         self.test_corpus_dataset = CorpusDataset(corpus_path=corpus_path, use_idx=lis_idx_test)
