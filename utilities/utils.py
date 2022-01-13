@@ -6,7 +6,9 @@ import fasttext
 
 from non_deep_method.config import FT_EMBED_DIM, ESP, CACHE_DIR, FAST_TEXT_PRETRAINED_PATH
 
-vn_word_emb = fasttext.load_model(FAST_TEXT_PRETRAINED_PATH)
+# vn_word_emb = fasttext.load_model(FAST_TEXT_PRETRAINED_PATH)
+
+vn_word_emb = None
 
 
 def get_wavg_word_emb_with_cached(tfidf_score, vocab, cached_filename):
