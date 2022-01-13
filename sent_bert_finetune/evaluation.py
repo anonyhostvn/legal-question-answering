@@ -79,6 +79,8 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 
 parser.add_argument("-model", "--model_name", help="Pretrained Model Name", default='vinai/phobert-base')
 
+parser.add_argument("-tokenizer", "--tokenizer_name", help="Pretrained tokenizer name", default='vinai/phobert-base')
+
 parser.add_argument('-test_idx_path', '--test_idx_path', help='Test idx path',
                     default='/Users/LongNH/Workspace/ZaloAIChallenge/data_spliter/test_idx.json')
 
@@ -96,8 +98,9 @@ parser.add_argument('-ques_json_path', '--question_json_path', help='Question js
 
 if __name__ == '__main__':
     args = vars(parser.parse_args())
+    print(args)
 
-    sbert_model = SentBertBuilder(pretrain_model=args['model_name'])
+    sbert_model = SentBertBuilder(pretrain_model=args['model_name'], pretrain_tokenize=args['tokenizer_name'])
     evaluation = Evaluation(sent_bert_model=sbert_model.model,
                             test_idx_path=args['test_idx_path'],
                             segmented_corpus_path=args['segmented_corpus_path'],
