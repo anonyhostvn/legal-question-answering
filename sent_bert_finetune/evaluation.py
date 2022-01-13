@@ -1,3 +1,5 @@
+import argparse
+
 from sentence_transformers import SentenceTransformer, util
 import json
 
@@ -72,12 +74,34 @@ class Evaluation:
         print('f2score: ', sum_f2score / len(self.lis_test_idx))
 
 
+parser = argparse.ArgumentParser(description='Process some integers.')
+
+parser.add_argument("-model", "--model_name", help="Pretrained Model Name", default='vinai/phobert-base')
+
+parser.add_argument('-test_idx_path', '--test_idx_path', help='Test idx path',
+                    default='/Users/LongNH/Workspace/ZaloAIChallenge/data_spliter/test_idx.json')
+
+parser.add_argument('-seg_cor_path', '--segmented_corpus_path', help='Segmented corpus path',
+                    default='/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/segmented_corpus.json')
+
+parser.add_argument('-seg_ques_path', '--segmented_ques_path', help='Segmented question path',
+                    default='/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/train_ques_segmented.json')
+
+parser.add_argument('-cor_json_path', '--corpus_json_path', help='Corpus json path',
+                    default='/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/legal_corpus.json')
+
+parser.add_argument('-ques_json_path', '--question_json_path', help='Question json path',
+                    default='/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/train_question_answer.json')
+
 if __name__ == '__main__':
-    sbert_model = SentBertBuilder(pretrain_model='vinai/phobert-base')
+    args = vars(parser.parse_args())
+    print(args)
+
+    sbert_model = SentBertBuilder(pretrain_model=args['model_name'])
     evaluation = Evaluation(sent_bert_model=sbert_model.model,
-                            test_idx_path='/Users/LongNH/Workspace/ZaloAIChallenge/data_spliter/test_idx.json',
-                            segmented_corpus_path='/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/segmented_corpus.json',
-                            segmented_ques_path='/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/train_ques_segmented.json',
-                            corpus_json_path='/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/legal_corpus.json',
-                            ques_json_path='/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/train_question_answer.json')
+                            test_idx_path=args['test_idx_path'],
+                            segmented_corpus_path=args['segmented_corpus_path'],
+                            segmented_ques_path=args['segmented_ques_path'],
+                            corpus_json_path=args['corpus_json_path'],
+                            ques_json_path=args['question_json_path'])
     evaluation.start_evaluate(top_n=20)
