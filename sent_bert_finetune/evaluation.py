@@ -7,6 +7,7 @@ from bm25_ranking.bm25_pre_ranking import bm25_ranking
 from non_deep_method.evaluation.eval_utils import calculate_f2i
 from sent_bert_finetune.sent_bert_builder import SentBertBuilder
 from utilities.utils import transform_seg2uni
+from tqdm import tqdm
 
 
 class Evaluation:
@@ -59,7 +60,7 @@ class Evaluation:
         # cosim_score = util.cos_sim(embedding_test_ques, embedding_corpus_ques)
         lis_predict_aid = []
 
-        for i, ques_id in enumerate(self.lis_test_idx):
+        for i, ques_id in enumerate(tqdm(self.lis_test_idx)):
             top_n_aid = self.bm25_ranking.get_ranking(query_idx=ques_id, prefix='train_ques', top_n=top_n)
             top_n_article_txt = [lis_txt_corpus[aid] for aid in top_n_aid]
             embedding_article = self.sent_bert_model.encode(top_n_article_txt, convert_to_tensor=True)
