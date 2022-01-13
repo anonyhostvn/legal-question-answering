@@ -6,7 +6,7 @@ from utilities.utils import transform_seg2uni
 
 
 class DataPreprocess:
-    def __init__(self, segmented_corpus_path, segmented_ques_path, test_idx_path):
+    def __init__(self, segmented_corpus_path, segmented_ques_path, test_idx_path, segmented_title_path):
         self.bm25_ranking = bm25_ranking
         with open(segmented_corpus_path, 'r') as f:
             self.segmented_corpus = json.load(f)
@@ -14,6 +14,13 @@ class DataPreprocess:
             self.segmented_ques = json.load(f)
         with open(test_idx_path, 'r') as f:
             self.lis_test_idx = json.load(f)
+        with open(segmented_title_path, 'r') as f:
+            self.segmented_title = json.load(f)
+
+    def generate_data_for_semantic_sim(self):
+        for corpus_id in range(len(self.segmented_corpus)):
+            
+        pass
 
     def test_bm25(self):
         print(transform_seg2uni([self.segmented_ques[0]]))

@@ -60,7 +60,7 @@ class Bm25PreRanking:
         return lis_idx
 
 
-bm25_ranking = Bm25PreRanking(cached_folder_path='/Users/LongNH/Workspace/ZaloAIChallenge/bm25_ranking/cached')
+bm25_ranking = Bm25PreRanking(cached_folder_path='bm25_ranking/cached')
 
 if __name__ == '__main__':
     with open('/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/segmented_corpus.json', 'r') as f:

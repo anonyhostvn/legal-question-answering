@@ -53,13 +53,9 @@ class Evaluation:
         segmented_test_ques = [self.segmented_ques[i] for i in self.lis_test_idx]
         lis_txt_test_ques = transform_seg2uni(segmented_data=segmented_test_ques)
         embedding_test_ques = self.sent_bert_model.encode(lis_txt_test_ques, convert_to_tensor=True)
-
         lis_txt_corpus = transform_seg2uni(segmented_data=self.segmented_corpus)
-        # embedding_corpus_ques = self.sent_bert_model.encode(lis_txt_corpus, convert_to_tensor=True)
 
-        # cosim_score = util.cos_sim(embedding_test_ques, embedding_corpus_ques)
         lis_predict_aid = []
-
         for i, ques_id in enumerate(tqdm(self.lis_test_idx)):
             top_n_aid = self.bm25_ranking.get_ranking(query_idx=ques_id, prefix='train_ques', top_n=top_n)
             top_n_article_txt = [lis_txt_corpus[aid] for aid in top_n_aid]
