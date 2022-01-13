@@ -95,7 +95,6 @@ parser.add_argument('-ques_json_path', '--question_json_path', help='Question js
 
 if __name__ == '__main__':
     args = vars(parser.parse_args())
-    print(args)
 
     sbert_model = SentBertBuilder(pretrain_model=args['model_name'])
     evaluation = Evaluation(sent_bert_model=sbert_model.model,
