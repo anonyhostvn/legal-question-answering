@@ -34,6 +34,7 @@ class Bm25PreRanking:
 
         modified_segmented_legal_corpus = [[tok for sent in article for tok in sent]
                                            for article in tqdm(segmented_legal_corpus)]
+        print('Computing BM25dict')
         self.bm25 = BM25Okapi(modified_segmented_legal_corpus)
 
         with open(self.cluster_segmented_query.get(prefix), 'r') as f:
@@ -63,10 +64,10 @@ class Bm25PreRanking:
 bm25_ranking = Bm25PreRanking(cached_folder_path='bm25_ranking/cached')
 
 if __name__ == '__main__':
-    with open('/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/segmented_corpus.json', 'r') as f:
+    with open('segemented_data/segmented_corpus.json', 'r') as f:
         legal_corpus = json.load(f)
 
-    with open('/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/train_ques_segmented.json', 'r') as f:
+    with open('segemented_data/train_ques_segmented.json', 'r') as f:
         ques_corpus = json.load(f)
 
     test_query_ids = 0
