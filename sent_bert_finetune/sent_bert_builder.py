@@ -18,4 +18,7 @@ class SentBertBuilder:
         self.train_loss = losses.CosineSimilarityLoss(self.model)
 
     def start_training(self, train_dataloader):
+        device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+        self.model = self.model.to(device)
         self.model.fit(train_objectives=[(train_dataloader, self.train_loss)], epochs=1, warmup_steps=100)
+        self.model.save('model_checkpoint')
