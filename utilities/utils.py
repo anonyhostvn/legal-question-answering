@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 from tqdm import tqdm
-import fasttext
+# import fasttext
 
 from non_deep_method.config import FT_EMBED_DIM, ESP, CACHE_DIR, FAST_TEXT_PRETRAINED_PATH
 
