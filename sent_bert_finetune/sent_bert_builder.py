@@ -1,4 +1,4 @@
-from sentence_transformers import SentenceTransformer, models, evaluation
+from sentence_transformers import SentenceTransformer, models, evaluation, losses
 from torch import nn
 import torch
 
@@ -15,3 +15,7 @@ class SentBertBuilder:
                                    out_features=256, activation_function=nn.Tanh())
 
         self.model = SentenceTransformer(modules=[word_embedding_model, pooling_model, dense_model], device=self.device)
+        self.train_loss = losses.CosineSimilarityLoss(self.model)
+
+    def start_training(self, train_dataloader):
+        self.model.fit(train_objectives=[(train_dataloader, self.train_loss)], epochs=1, warmup_steps=100)

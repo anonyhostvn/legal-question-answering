@@ -45,7 +45,7 @@ class DataPreprocess:
             for i_sent in lis_rand_sent:
                 segmented_sent = self.segmented_corpus[corpus_id][i_sent]
                 txt_sent = ' '.join(segmented_sent)
-                lis_train_example.append(InputExample(texts=[title_txt, txt_sent], label=1))
+                lis_train_example.append(InputExample(texts=[title_txt, txt_sent], label=1.0))
 
             for _ in range(len(lis_rand_sent)):
                 rand_corpus_id = random.randint(0, len(self.segmented_corpus) - 1)
@@ -54,7 +54,7 @@ class DataPreprocess:
                 rand_sent_id = random.randint(0, len(self.segmented_corpus[rand_corpus_id]) - 1)
                 segmented_sent = self.segmented_corpus[rand_corpus_id][rand_sent_id]
                 txt_sent = ' '.join(segmented_sent)
-                lis_train_example.append(InputExample(texts=[title_txt, txt_sent], label=0))
+                lis_train_example.append(InputExample(texts=[title_txt, txt_sent], label=0.0))
         return lis_train_example
 
     def generate_dataloader_for_semantic_sim(self):
