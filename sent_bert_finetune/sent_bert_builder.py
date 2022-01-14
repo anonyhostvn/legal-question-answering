@@ -2,6 +2,8 @@ from sentence_transformers import SentenceTransformer, models, evaluation, losse
 from torch import nn
 import torch
 
+from global_config import SENT_BERT_CHECKPOINT
+
 
 class SentBertBuilder:
     def __init__(self, pretrain_model, pretrain_tokenize):
@@ -21,4 +23,4 @@ class SentBertBuilder:
         device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         self.model = self.model.to(device)
         self.model.fit(train_objectives=[(train_dataloader, self.train_loss)], epochs=1, warmup_steps=100)
-        self.model.save('model_checkpoint')
+        self.model.save(SENT_BERT_CHECKPOINT)

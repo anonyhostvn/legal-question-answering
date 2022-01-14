@@ -1,13 +1,14 @@
-import argparse
-
 from sentence_transformers import SentenceTransformer, util
 import json
 
 from bm25_ranking.bm25_pre_ranking import bm25_ranking
+from global_config import SEGMENTED_LEGAL_CORPUS, SEGMENTED_DATA_QUESTION, LEGAL_CORPUS_PATH, DATA_QUESTION_PATH, \
+    TEST_IDX, SENT_BERT_CHECKPOINT
 from non_deep_method.evaluation.eval_utils import calculate_f2i
 from sent_bert_finetune.sent_bert_builder import SentBertBuilder
 from utilities.utils import transform_seg2uni
 from tqdm import tqdm
+import os
 
 
 class Evaluation:
@@ -23,9 +24,9 @@ class Evaluation:
         with open(segmented_ques_path, 'r') as f:
             self.segmented_ques = json.load(f)
 
-        with open(ques_json_path, 'r') as f:
+        with open(ques_json_path, 'r', encoding='utf-8') as f:
             self.lis_ques = json.load(f).get('items')
-        with open(corpus_json_path, 'r') as f:
+        with open(corpus_json_path, 'r', encoding='utf-8') as f:
             self.lis_corpus = json.load(f)
             self.lis_corpus = [{'law_id': law.get('law_id'), **article}
                                for law in self.lis_corpus for article in law.get('articles')]
@@ -71,36 +72,12 @@ class Evaluation:
         print('f2score: ', sum_f2score / len(self.lis_test_idx))
 
 
-parser = argparse.ArgumentParser(description='Process some integers.')
-
-parser.add_argument("-model", "--model_name", help="Pretrained Model Name", default='vinai/phobert-base')
-
-parser.add_argument("-tokenizer", "--tokenizer_name", help="Pretrained tokenizer name", default='vinai/phobert-base')
-
-parser.add_argument('-test_idx_path', '--test_idx_path', help='Test idx path',
-                    default='/Users/LongNH/Workspace/ZaloAIChallenge/data_spliter/test_idx.json')
-
-parser.add_argument('-seg_cor_path', '--segmented_corpus_path', help='Segmented corpus path',
-                    default='/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/segmented_corpus.json')
-
-parser.add_argument('-seg_ques_path', '--segmented_ques_path', help='Segmented question path',
-                    default='/Users/LongNH/Workspace/ZaloAIChallenge/segemented_data/train_ques_segmented.json')
-
-parser.add_argument('-cor_json_path', '--corpus_json_path', help='Corpus json path',
-                    default='/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/legal_corpus.json')
-
-parser.add_argument('-ques_json_path', '--question_json_path', help='Question json path',
-                    default='/Users/LongNH/Workspace/ZaloAIChallenge/zac2021-ltr-data/train_question_answer.json')
-
 if __name__ == '__main__':
-    args = vars(parser.parse_args())
-    print(args)
-
-    sbert_model = SentBertBuilder(pretrain_model=args['model_name'], pretrain_tokenize=args['tokenizer_name'])
-    evaluation = Evaluation(sent_bert_model=sbert_model.model,
-                            test_idx_path=args['test_idx_path'],
-                            segmented_corpus_path=args['segmented_corpus_path'],
-                            segmented_ques_path=args['segmented_ques_path'],
-                            corpus_json_path=args['corpus_json_path'],
-                            ques_json_path=args['question_json_path'])
+    sbert_model = SentenceTransformer(model_name_or_path=SENT_BERT_CHECKPOINT)
+    evaluation = Evaluation(sent_bert_model=sbert_model,
+                            test_idx_path=TEST_IDX,
+                            segmented_corpus_path=SEGMENTED_LEGAL_CORPUS,
+                            segmented_ques_path=SEGMENTED_DATA_QUESTION,
+                            corpus_json_path=LEGAL_CORPUS_PATH,
+                            ques_json_path=DATA_QUESTION_PATH)
     evaluation.start_evaluate(top_n=20)
