@@ -9,3 +9,4 @@ SEGMENTED_TEST_QUESTION = os.path.join('segemented_data', 'test_ques_segmented.j
 SEGMENTED_TITLE_PATH = os.path.join('segemented_data', 'segmented_title.json')
 TRAIN_IDX = os.path.join('data_spliter', 'train_idx.json')
 TEST_IDX = os.path.join('data_spliter', 'test_idx.json')
+LEGAL_BERT_MLM = 'legal_bert_checkpoint'

@@ -1,4 +1,5 @@
-from global_config import SEGMENTED_LEGAL_CORPUS, SEGMENTED_DATA_QUESTION, TEST_IDX, SEGMENTED_TITLE_PATH
+from global_config import SEGMENTED_LEGAL_CORPUS, SEGMENTED_DATA_QUESTION, TEST_IDX, SEGMENTED_TITLE_PATH, \
+    LEGAL_BERT_MLM
 from sent_bert_finetune.data_preprocess import DataPreprocess
 from sent_bert_finetune.sent_bert_builder import SentBertBuilder
 
@@ -15,7 +16,11 @@ class TrainingProcess:
                                          segmented_title_path=SEGMENTED_TITLE_PATH)
         train_dataloader = data_preprocess.generate_dataloader_for_semantic_sim()
 
-        sent_bert_builder = SentBertBuilder(pretrain_model='vinai/phobert-base', pretrain_tokenize='vinai/phobert-base')
+        try:
+            sent_bert_builder = SentBertBuilder(pretrain_model=LEGAL_BERT_MLM, pretrain_tokenize='vinai/phobert-base')
+        except Exception:
+            sent_bert_builder = SentBertBuilder(pretrain_model='vinai/phobert-base',
+                                                pretrain_tokenize='vinai/phobert-base')
         sent_bert_builder.start_training(train_dataloader)
 
 
