@@ -1,6 +1,6 @@
 from global_config import SENT_BERT_CHECKPOINT
-from sent_bert_downstream.data_process import DataProcess
-from sent_bert_downstream.sent_bert_downstream import SentBertDownstream
+from sent_bert_training.data_process import DataProcess
+from sent_bert_training.sent_bert_downstream import SentBertDownstream
 
 
 class DownstreamTrainingProcess:
