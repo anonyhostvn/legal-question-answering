@@ -1,27 +1,14 @@
-from torch.utils.data import DataLoader, Dataset
-from torch.utils.data.dataset import T_co
+from torch.utils.data import DataLoader
 
 from bm25_ranking.bm25_pre_ranking import bm25_ranking
 from global_config import SEGMENTED_LEGAL_CORPUS, SEGMENTED_DATA_QUESTION, TEST_IDX, SEGMENTED_TITLE_PATH
-from sentence_transformers import InputExample, SentencesDataset
+from sentence_transformers import InputExample
 import numpy as np
 import json
 import random
-import torch
 
+from utilities.sim_sent_dataset import SimSentDataset
 from utilities.utils import transform_seg2uni
-
-
-class SimSentDataset(Dataset):
-
-    def __init__(self, lis_examples):
-        self.lis_example = lis_examples
-
-    def __len__(self):
-        return len(self.lis_example)
-
-    def __getitem__(self, index):
-        return self.lis_example[index]
 
 
 class DataPreprocess:
