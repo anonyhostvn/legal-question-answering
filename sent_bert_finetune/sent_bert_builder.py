@@ -6,17 +6,23 @@ from global_config import SENT_BERT_CHECKPOINT
 
 
 class SentBertBuilder:
-    def __init__(self, pretrain_model, pretrain_tokenize):
+    def __init__(self, pretrain_model=None, pretrain_tokenize=None, pretrain_sent_bert=None):
+        assert pretrain_sent_bert is not None or (pretrain_model is not None and pretrain_tokenize is not None)
         self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-        word_embedding_model = models.Transformer(model_name_or_path=pretrain_model,
-                                                  tokenizer_name_or_path=pretrain_tokenize, max_seq_length=256)
-        word_embedding_model.to(self.device)
-        pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
+        if pretrain_sent_bert is None:
+            word_embedding_model = models.Transformer(model_name_or_path=pretrain_model,
+                                                      tokenizer_name_or_path=pretrain_tokenize, max_seq_length=256)
+            word_embedding_model.to(self.device)
+            pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
 
-        dense_model = models.Dense(in_features=pooling_model.get_sentence_embedding_dimension(),
-                                   out_features=256, activation_function=nn.Tanh())
+            dense_model = models.Dense(in_features=pooling_model.get_sentence_embedding_dimension(),
+                                       out_features=256, activation_function=nn.Tanh())
 
-        self.model = SentenceTransformer(modules=[word_embedding_model, pooling_model, dense_model], device=self.device)
+            self.model = SentenceTransformer(modules=[word_embedding_model, pooling_model, dense_model],
+                                             device=self.device)
+        else:
+            self.model = SentenceTransformer(model_name_or_path=pretrain_sent_bert)
+
         self.train_loss = losses.CosineSimilarityLoss(self.model)
 
     def start_training(self, train_dataloader):
