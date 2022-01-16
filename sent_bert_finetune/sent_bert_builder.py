@@ -1,8 +1,8 @@
-from sentence_transformers import SentenceTransformer, models, evaluation, losses
+from sentence_transformers import SentenceTransformer, models, losses
 from torch import nn
 import torch
 
-from global_config import SENT_BERT_CHECKPOINT
+from global_config import SAVE_SENT_BERT_CHECKPOINT_PATH
 
 
 class SentBertBuilder:
@@ -27,6 +27,10 @@ class SentBertBuilder:
 
     def start_training(self, train_dataloader):
         device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+        n_save_step = 1000
+        print('Save checkpoint in ', SAVE_SENT_BERT_CHECKPOINT_PATH, 'after ', n_save_step, 'step')
         self.model = self.model.to(device)
-        self.model.fit(train_objectives=[(train_dataloader, self.train_loss)], epochs=1, warmup_steps=100)
-        self.model.save(SENT_BERT_CHECKPOINT)
+        self.model.fit(train_objectives=[(train_dataloader, self.train_loss)], epochs=4, warmup_steps=100,
+                       checkpoint_path=SAVE_SENT_BERT_CHECKPOINT_PATH, checkpoint_save_total_limit=1,
+                       checkpoint_save_steps=n_save_step)
+        self.model.save(SAVE_SENT_BERT_CHECKPOINT_PATH)

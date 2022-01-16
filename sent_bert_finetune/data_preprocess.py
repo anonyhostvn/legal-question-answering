@@ -62,7 +62,7 @@ class DataPreprocess:
         def custom_collate_fn(batch_data):
             return batch_data
 
-        train_examples = self.generate_data_for_semantic_sim()[:1]
+        train_examples = self.generate_data_for_semantic_sim()[:16]
         sim_sent_dataset = SimSentDataset(lis_examples=train_examples)
         return DataLoader(sim_sent_dataset, shuffle=True, batch_size=16, collate_fn=custom_collate_fn)
 

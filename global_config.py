@@ -11,3 +11,4 @@ TRAIN_IDX = os.path.join('data_spliter', 'train_idx.json')
 TEST_IDX = os.path.join('data_spliter', 'test_idx.json')
 LEGAL_BERT_MLM = 'legal_bert_checkpoint'
 SENT_BERT_CHECKPOINT = 'sent_bert_checkpoint'
+SAVE_SENT_BERT_CHECKPOINT_PATH = 'sent_bert_checkpoint'
