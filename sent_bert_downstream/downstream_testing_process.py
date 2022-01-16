@@ -9,7 +9,7 @@ class DownstreamTestingProcess:
         self.sent_bert_model = SentBertDownstream(pretrain_sent_bert=SENT_BERT_CHECKPOINT)
 
     def cook_data(self):
-        return self.data_process.generate_eval_se_sim_dataloader()
+        return self.data_process.generate_eval_se_sim_dataset()
 
     def start_testing(self):
         test_data_dict = self.cook_data()

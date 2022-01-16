@@ -1,5 +1,5 @@
 import torch
-from sentence_transformers import SentenceTransformer, losses
+from sentence_transformers import SentenceTransformer, losses, util
 
 from global_config import SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH
 
@@ -23,9 +23,12 @@ class SentBertDownstream:
                        checkpoint_save_steps=n_save_step)
         self.model.save(SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH)
 
-    def inferences(self, lis_sent_1, lis_sent_2):
+    def inferences(self, sent_1, lis_sent_2):
         self.model.eval()
-        embedding_1 = self.model.encode(lis_sent_1)
-        embedding_2 = self.model.encode(lis_sent_2)
-
-
+        embedding_1 = self.model.encode([sent_1], convert_to_tensor=True)
+        embedding_2 = self.model.encode(lis_sent_2, convert_to_tensor=True)
+        cosine_score = util.cos_sim(embedding_1, embedding_2)
+        cosine_result = []
+        for i in range(len(lis_sent_2)):
+            cosine_result.append(cosine_score[0, i])
+        return cosine_result
