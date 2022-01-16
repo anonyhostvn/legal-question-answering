@@ -34,7 +34,7 @@ class DataProducer:
         return self.segmented_ques[qid]
 
     def find_article_idx(self, law_id, art_id):
-        for idx, legal_article in self.lis_legal_article:
+        for idx, legal_article in enumerate(self.lis_legal_article):
             if law_id == legal_article.get('law_id') and art_id == legal_article.get('article_id'):
                 return idx
         return None

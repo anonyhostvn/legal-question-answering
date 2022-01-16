@@ -5,10 +5,8 @@ from bm25_ranking.bm25_pre_ranking import bm25_ranking
 from global_config import SEGMENTED_LEGAL_CORPUS, SEGMENTED_DATA_QUESTION, LEGAL_CORPUS_PATH, DATA_QUESTION_PATH, \
     TEST_IDX, SENT_BERT_CHECKPOINT
 from non_deep_method.evaluation.eval_utils import calculate_f2i
-from sent_bert_finetune.sent_bert_builder import SentBertBuilder
 from utilities.utils import transform_seg2uni
 from tqdm import tqdm
-import os
 
 
 class Evaluation:

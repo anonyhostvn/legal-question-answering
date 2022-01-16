@@ -24,18 +24,18 @@ class DataProcess:
             for aidx in gtruth_relevance_aidx:
                 segmented_article = self.data_producer.get_segmented_legal_article(aidx)
                 txt_article = ' '.join([tok for sent in segmented_article for tok in sent])
-                lis_example.append(InputExample(texts=[txt_ques, txt_article], label=1))
+                lis_example.append(InputExample(texts=[txt_ques, txt_article], label=1.0))
 
             for aidx in bm25_ranking_aidx:
                 if aidx not in gtruth_relevance_aidx:
                     segmented_article = self.data_producer.get_segmented_legal_article(aidx)
                     txt_article = ' '.join([tok for sent in segmented_article for tok in sent])
-                    lis_example.append(InputExample(texts=[txt_ques, txt_article], label=0))
+                    lis_example.append(InputExample(texts=[txt_ques, txt_article], label=0.0))
 
         return lis_example
 
     def generate_se_sim_dataloader(self):
-        lis_example = self.generate_se_sim_dataset()
+        lis_example = self.generate_se_sim_dataset()[:16]
 
         def custom_collate_fn(batch_data):
             return batch_data
