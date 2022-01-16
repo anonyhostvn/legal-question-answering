@@ -53,33 +53,34 @@ class DataProcess:
 
             bm25_ranking_aidx = self.bm25_ranking.get_ranking(query_idx=ques_idx, prefix='train_ques', top_n=self.top_n)
 
-            feed_forward_data = []
+            lis_candidate_article = []
 
             for aidx in bm25_ranking_aidx:
                 segmented_article = self.data_producer.get_segmented_legal_article(aidx)
                 txt_article = ' '.join([tok for sent in segmented_article for tok in sent])
-                feed_forward_data.append(InputExample(texts=[txt_ques, txt_article], label=0))
+                lis_candidate_article.append(txt_article)
 
             eval_se_sim_dataset.append({
                 'gtruth': gtruth_relevance_aidx,
                 'bm25_ranking': bm25_ranking_aidx,
-                'feed_forward_data': feed_forward_data
+                'lis_candidate_article': lis_candidate_article,
+                'question': txt_ques
             })
 
             return eval_se_sim_dataset
-
-    def generate_eval_se_sim_dataloader(self):
-        lis_eval_se_sim = self.generate_eval_se_sim_dataset()
-
-        def custom_collate_fn(batch_data):
-            return batch_data
-
-        for eval_id in range(len(lis_eval_se_sim)):
-            lis_feed_forward = lis_eval_se_sim[eval_id].get('feed_forward_data')
-            sim_sent_dataset = SimSentDataset(lis_examples=lis_feed_forward)
-            sim_sent_dataloader = DataLoader(sim_sent_dataset, shuffle=False, batch_size=self.batch_size,
-                                             collate_fn=custom_collate_fn)
-            lis_eval_se_sim[eval_id]['feed_forward_dataloader'] = sim_sent_dataloader
-            lis_eval_se_sim[eval_id].pop('feed_forward_data', None)
-
-        return lis_eval_se_sim
+    #
+    # def generate_eval_se_sim_dataloader(self):
+    #     lis_eval_se_sim = self.generate_eval_se_sim_dataset()
+    #
+    #     def custom_collate_fn(batch_data):
+    #         return batch_data
+    #
+    #     for eval_id in range(len(lis_eval_se_sim)):
+    #         lis_feed_forward = lis_eval_se_sim[eval_id].get('feed_forward_data')
+    #         sim_sent_dataset = SimSentDataset(lis_examples=lis_feed_forward)
+    #         sim_sent_dataloader = DataLoader(sim_sent_dataset, shuffle=False, batch_size=self.batch_size,
+    #                                          collate_fn=custom_collate_fn)
+    #         lis_eval_se_sim[eval_id]['feed_forward_dataloader'] = sim_sent_dataloader
+    #         lis_eval_se_sim[eval_id].pop('feed_forward_data', None)
+    #
+    #     return lis_eval_se_sim

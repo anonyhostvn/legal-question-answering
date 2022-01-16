@@ -22,3 +22,10 @@ class SentBertDownstream:
                        checkpoint_path=SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH, checkpoint_save_total_limit=1,
                        checkpoint_save_steps=n_save_step)
         self.model.save(SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH)
+
+    def inferences(self, lis_sent_1, lis_sent_2):
+        self.model.eval()
+        embedding_1 = self.model.encode(lis_sent_1)
+        embedding_2 = self.model.encode(lis_sent_2)
+
+
