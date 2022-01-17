@@ -12,16 +12,16 @@ class DataProducer:
         with open(TEST_IDX, 'r') as f:
             self.lis_test_idx = json.load(f)
 
-        with open(SEGMENTED_LEGAL_CORPUS, 'r') as f:
+        with open(SEGMENTED_LEGAL_CORPUS, 'r', encoding='utf-8') as f:
             self.segmented_legal_corpus = json.load(f)
 
-        with open(SEGMENTED_DATA_QUESTION, 'r') as f:
+        with open(SEGMENTED_DATA_QUESTION, 'r', encoding='utf-8') as f:
             self.segmented_ques = json.load(f)
 
-        with open(DATA_QUESTION_PATH, 'r') as f:
+        with open(DATA_QUESTION_PATH, 'r', encoding='utf-8') as f:
             self.dat_ques = json.load(f).get('items')
 
-        with open(LEGAL_CORPUS_PATH, 'r') as f:
+        with open(LEGAL_CORPUS_PATH, 'r', encoding='utf-8') as f:
             self.legal_corpus = json.load(f)
             self.lis_legal_article = [
                 {**article, 'law_id': legal.get('law_id')} for legal in self.legal_corpus
