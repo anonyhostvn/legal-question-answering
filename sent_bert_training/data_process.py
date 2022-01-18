@@ -67,7 +67,7 @@ class DataProcess:
                 'question': txt_ques
             })
 
-            return eval_se_sim_dataset
+        return eval_se_sim_dataset
     #
     # def generate_eval_se_sim_dataloader(self):
     #     lis_eval_se_sim = self.generate_eval_se_sim_dataset()
