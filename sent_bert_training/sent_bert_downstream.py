@@ -1,7 +1,7 @@
 import torch
 from sentence_transformers import SentenceTransformer, losses, util
 
-from global_config import SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH
+from global_config import SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH
 
 
 class SentBertDownstream:
@@ -15,13 +15,13 @@ class SentBertDownstream:
     def start_training(self, train_dataloader):
         device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         n_save_step = 1000
-        print('Save checkpoint in ', SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH, 'after ', n_save_step, 'step using: ',
+        print('Save checkpoint in ', SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH, 'after ', n_save_step, 'step using: ',
               device)
         self.model = self.model.to(device)
         self.model.fit(train_objectives=[(train_dataloader, self.train_loss)], epochs=2, warmup_steps=100,
-                       checkpoint_path=SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH, checkpoint_save_total_limit=1,
+                       checkpoint_path=SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH, checkpoint_save_total_limit=1,
                        checkpoint_save_steps=n_save_step)
-        self.model.save(SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH)
+        self.model.save(SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH)
 
     def inferences(self, sent_1, lis_sent_2):
         self.model.eval()

@@ -1,4 +1,4 @@
-from global_config import SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH
+from global_config import SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH
 from non_deep_method.evaluation.eval_utils import calculate_f2i
 from sent_bert_training.data_process import DataProcess
 from sent_bert_training.sent_bert_downstream import SentBertDownstream
@@ -7,7 +7,7 @@ from sent_bert_training.sent_bert_downstream import SentBertDownstream
 class DownstreamTestingProcess:
     def __init__(self):
         self.data_process = DataProcess()
-        self.sent_bert_model = SentBertDownstream(pretrain_sent_bert=SAVE_SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH)
+        self.sent_bert_model = SentBertDownstream(pretrain_sent_bert=SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH)
 
     def cook_data(self):
         return self.data_process.generate_eval_se_sim_dataset()
