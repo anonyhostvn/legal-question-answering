@@ -25,6 +25,7 @@ class SentBertBuilder:
 
         self.train_loss = losses.CosineSimilarityLoss(self.model)
 
+    # Epoch: 100 % 4 / 4[6:23:56 < 00:00, 5759.10s / it]
     def start_training(self, train_dataloader):
         device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         n_save_step = 1000
