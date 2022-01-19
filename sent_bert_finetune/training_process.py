@@ -41,5 +41,6 @@ class TrainingProcess:
 
 
 if __name__ == '__main__':
+    # Epoch: 100 % 5 / 5[7:59:30 < 00:00, 5754.11s / it]
     # TrainingProcess.start_training()
     TrainingProcess.continue_training()
