@@ -3,7 +3,8 @@ import os
 from rank_bm25 import BM25Okapi
 import json
 
-from global_config import SEGMENTED_LEGAL_CORPUS, SEGMENTED_DATA_QUESTION, SEGMENTED_TEST_QUESTION
+from global_config import SEGMENTED_LEGAL_CORPUS, SEGMENTED_DATA_QUESTION, SEGMENTED_TEST_QUESTION, \
+    SEGMENTED_PRIVATE_TEST
 import numpy as np
 from tqdm import tqdm
 import pickle
@@ -14,7 +15,8 @@ class Bm25PreRanking:
         self.bm25 = None
         self.cluster_segmented_query = {
             'train_ques': SEGMENTED_DATA_QUESTION,
-            'test_ques': SEGMENTED_TEST_QUESTION
+            'test_ques': SEGMENTED_TEST_QUESTION,
+            'private_ques': SEGMENTED_PRIVATE_TEST
         }
         self.loaded_score = None
         self.loaded_prefix = None
@@ -94,7 +96,7 @@ if __name__ == '__main__':
     # ranking_ids = bm25_ranking.get_ranking(query_idx=test_query_ids, prefix='train_ques', top_n=5)
 
     print(' '.join([tok for sent in test_ques_corpus[test_query_ids] for tok in sent]))
-    ranking_ids = bm25_ranking.get_ranking(query_idx=test_query_ids, prefix='test_ques', top_n=5)
+    ranking_ids = bm25_ranking.get_ranking(query_idx=test_query_ids, prefix='private_ques', top_n=5)
 
     for ids in ranking_ids:
         article = legal_corpus[ids]
