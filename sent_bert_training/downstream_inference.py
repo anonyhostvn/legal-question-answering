@@ -2,7 +2,7 @@ import json
 import os
 
 from bm25_ranking.bm25_pre_ranking import bm25_ranking
-from global_config import SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH, TEST_QUESTION_PATH, SEGMENTED_TEST_QUESTION, \
+from global_config import SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH, \
     LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS, PRIVATE_TEST_QUESTION_PATH, SEGMENTED_PRIVATE_TEST
 from tqdm import tqdm
 from sent_bert_training.sent_bert_downstream import SentBertDownstream
@@ -12,6 +12,7 @@ class DownstreamInference:
     def __init__(self):
         self.model = SentBertDownstream(pretrain_sent_bert=SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH)
         self.bm25 = bm25_ranking
+        self.top_n = 50
         with open(SEGMENTED_LEGAL_CORPUS, 'r', encoding='utf-8') as f:
             self.segmented_corpus = json.load(f)
         with open(LEGAL_CORPUS_PATH, 'r', encoding='utf-8') as f:
@@ -41,16 +42,18 @@ class DownstreamInference:
 
         public_test_submission = []
         for ques_idx, segmented_ques in enumerate(tqdm(lis_segmented_test_ques)):
-            lis_bm25_ranking = self.bm25.get_ranking(query_idx=ques_idx, prefix=prefix_bm25, top_n=100)
+            lis_bm25_ranking = self.bm25.get_ranking(query_idx=ques_idx, prefix=prefix_bm25, top_n=self.top_n)
             lis_aidx = self.predict_query(segmented_ques, lis_bm25_ranking)
             relevance_articles = [
                 {'law_id': self.legal_article_id[aidx][0], 'article_id': self.legal_article_id[aidx][1]}
                 for aidx in lis_aidx]
 
-            public_test_submission.append({
+            single_query_result = {
                 'question_id': lis_test_ques[ques_idx].get('question_id'),
                 'relevant_articles': relevance_articles
-            })
+            }
+
+            public_test_submission.append(single_query_result)
 
         with open(os.path.join('submission_folder', f'{prefix_bm25}_submission.json'), 'w') as f:
             json.dump(public_test_submission, f)
