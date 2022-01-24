@@ -13,17 +13,19 @@ import json
 from accelerate import Accelerator
 
 from finetunning_bert.training_utilities import perform_epoch
+from global_config import PRETRAIN_BERT_NAME, RAW_LEGAL_TEXT_CORPUS_PATH, LEGAL_BERT_MLM
 
 
 class ModelTraining:
-    def __init__(self, pretrain_name, mlm_prob, tokenizer_name,
-                 corpus_path, train_idx_path, test_idx_path,
-                 save_folder, cut_size=None, batch_size=10):
+    def __init__(self, train_idx_path, test_idx_path,
+                 cut_size=None, batch_size=32, mlm_prob=0.15, ):
         print('batch size : ', batch_size)
-        print('save folder: ', save_folder)
-        self.save_folder = save_folder
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-        self.mlm_bert_model = AutoModelForMaskedLM.from_pretrained(pretrain_name)
+        self.save_folder = LEGAL_BERT_MLM
+        print('save folder: ', self.save_folder)
+
+        self.corpus_path = RAW_LEGAL_TEXT_CORPUS_PATH
+        self.tokenizer = AutoTokenizer.from_pretrained(PRETRAIN_BERT_NAME)
+        self.mlm_bert_model = AutoModelForMaskedLM.from_pretrained(PRETRAIN_BERT_NAME)
         self.mlm_prob = mlm_prob
         self.batch_size = batch_size
 
@@ -35,8 +37,8 @@ class ModelTraining:
         print('Training samples: ', len(lis_idx_train))
         print('Testing samples: ', len(lis_idx_test))
 
-        self.train_corpus_dataset = CorpusDataset(corpus_path=corpus_path, use_idx=lis_idx_train)
-        self.test_corpus_dataset = CorpusDataset(corpus_path=corpus_path, use_idx=lis_idx_test)
+        self.train_corpus_dataset = CorpusDataset(corpus_path=self.corpus_path, use_idx=lis_idx_train)
+        self.test_corpus_dataset = CorpusDataset(corpus_path=self.corpus_path, use_idx=lis_idx_test)
         self.train_dataloader = DataLoader(dataset=self.train_corpus_dataset, batch_size=self.batch_size,
                                            collate_fn=self.collate_fn_dataloader)
         self.test_dataloader = DataLoader(dataset=self.test_corpus_dataset, batch_size=self.batch_size,

@@ -1,4 +1,0 @@
-bert_corpus_path.txt
-tokenized_output.pkl
-pretrained_model/*
-!.gitignore
