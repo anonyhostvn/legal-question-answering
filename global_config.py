@@ -3,6 +3,7 @@ import os
 LEGAL_CORPUS_PATH = os.path.join('zac2021-ltr-data', 'legal_corpus.json')
 DATA_QUESTION_PATH = os.path.join('zac2021-ltr-data', 'train_question_answer.json')
 TEST_QUESTION_PATH = os.path.join('zac2021-ltr-data', 'public_test_question.json')
+PRIVATE_TEST_QUESTION_PATH = os.path.join('zac2021-ltr-data', 'private_test_question.json')
 SEGMENTED_LEGAL_CORPUS = os.path.join('segemented_data', 'segmented_corpus.json')
 SEGMENTED_DATA_QUESTION = os.path.join('segemented_data', 'train_ques_segmented.json')
 SEGMENTED_TEST_QUESTION = os.path.join('segemented_data', 'test_ques_segmented.json')
