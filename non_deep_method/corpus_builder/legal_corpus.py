@@ -5,6 +5,7 @@ from non_deep_method.corpus_builder.abstract_corpus import AbstractCorpus
 
 
 class LegalCorpus(AbstractCorpus):
+
     def __init__(self, corpus_json_path, corpus_segmented_path):
         with open(corpus_json_path, 'r') as f:
             self.json_corpus = json.load(f)
@@ -22,6 +23,9 @@ class LegalCorpus(AbstractCorpus):
         for aidx, article_obj in enumerate(self.lis_article):
             if article_obj.get('law_id') == law_id and article_obj.get('article_id') == article_id:
                 return aidx
+
+    def get_len_corpus(self):
+        return len(self.segmented_corpus)
 
 
 if __name__ == '__main__':

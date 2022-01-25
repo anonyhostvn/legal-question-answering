@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 from global_config import DATA_QUESTION_PATH, SEGMENTED_DATA_QUESTION, LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS
@@ -31,6 +33,21 @@ class DataBuilder:
         self.pairwise_bi_tfidf = PairwiseTfidf(self.legal_corpus.bi_corpus, self.legal_ques_corpus.bi_corpus)
 
         self.ftext_machine = ftext_machine
+
+    def get_relevant_aidx_of_ques(self, qidx):
+        lis_relevant_article = self.legal_ques_corpus.get_lis_relevant_article(qidx)
+        lis_relevant_aidx = [self.legal_corpus.get_aidx(article.get('law_id'), article.get('article_id'))
+                             for article in lis_relevant_article]
+        return lis_relevant_aidx
+
+    def get_random_aidx(self):
+        return random.randint(0, self.legal_corpus.get_len_corpus() - 1)
+
+    def get_non_relevant_aidx_of_ques(self, lis_relevant_aidx):
+        random_aidx = self.get_random_aidx()
+        while random_aidx in lis_relevant_aidx:
+            random_aidx = self.get_random_aidx()
+        return random_aidx
 
     def get_feature_vector(self, ques_idx, corpus_idx):
         cos_uni_tfidf = self.pairwise_uni_tfidf.get_cosine_sim(ques_idx, corpus_idx)
