@@ -7,6 +7,8 @@ from global_config import LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS, DATA_QUESTI
 from non_deep_method.corpus_builder.legal_corpus import LegalCorpus
 from non_deep_method.corpus_builder.legal_question_corpus import LegalQuestionCorpus
 from non_deep_method.data_builder.data_builder import DataBuilder
+import numpy as np
+import os
 
 
 class ModelTraining:
@@ -16,6 +18,8 @@ class ModelTraining:
         self.train_ques_corpus = LegalQuestionCorpus(json_ques_path=DATA_QUESTION_PATH,
                                                      seg_ques_path=SEGMENTED_DATA_QUESTION)
         self.data_builder = DataBuilder(self.train_ques_corpus, self.legal_corpus)
+        self.SAVE_X_PATH = os.path.join('large_files', 'train_x.npy')
+        self.SAVE_Y_PATH = os.path.join('large_files', 'train_y.npy')
 
     def generate_idx_couple(self, lis_qidx, neg_ratio=5):
         lis_couple = []
@@ -41,13 +45,20 @@ class ModelTraining:
         for qidx, aidx, label in tqdm(lis_couple, desc='Building feature vector'):
             x.append(self.data_builder.get_feature_vector(qidx, aidx))
             y.append(label)
-        return x, y
+        return np.array(x), np.array(y)
+
+    def start_generate(self):
+        x, y = self.cook_training_data()
+        np.save(self.SAVE_X_PATH, x)
+        np.save(self.SAVE_Y_PATH, y)
 
     def start_training(self):
-        x, y = self.cook_training_data()
-        print('test')
+        x = np.load(self.SAVE_X_PATH)
+        y = np.load(self.SAVE_Y_PATH)
+        pass
 
 
 if __name__ == '__main__':
     model_training = ModelTraining()
-    model_training.start_training()
+    model_training.start_generate()
+    # model_training.start_training()
