@@ -1,4 +1,9 @@
-from global_config import LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS, DATA_QUESTION_PATH, SEGMENTED_DATA_QUESTION
+import json
+
+from tqdm import tqdm
+
+from global_config import LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS, DATA_QUESTION_PATH, SEGMENTED_DATA_QUESTION, \
+    TRAIN_IDX
 from non_deep_method.corpus_builder.legal_corpus import LegalCorpus
 from non_deep_method.corpus_builder.legal_question_corpus import LegalQuestionCorpus
 from non_deep_method.data_builder.data_builder import DataBuilder
@@ -12,9 +17,36 @@ class ModelTraining:
                                                      seg_ques_path=SEGMENTED_DATA_QUESTION)
         self.data_builder = DataBuilder(self.train_ques_corpus, self.legal_corpus)
 
-    def cook_data(self, lis_qidx):
-        for qidx in lis_qidx:
-            pass
+    def generate_idx_couple(self, lis_qidx, top_n=50):
+        lis_couple = []
+        for qidx in tqdm(lis_qidx, desc='Building list of couple'):
+            lis_relevant_aidx = self.data_builder.get_relevant_aidx_of_ques(qidx)
+            lis_non_relevant_aidx = [self.data_builder.get_non_relevant_aidx_of_ques(lis_relevant_aidx)
+                                     for i in range(top_n)]
+            for aidx in lis_relevant_aidx:
+                lis_couple.append((qidx, aidx, 1))
+            for aidx in lis_non_relevant_aidx:
+                lis_couple.append((qidx, aidx, 0))
+        return lis_couple
+
+    def cook_training_data(self):
+        with open(TRAIN_IDX, 'r') as f:
+            lis_ques_idx = json.load(f)
+
+        lis_couple = self.generate_idx_couple(lis_ques_idx, top_n=50)
+
+        x = []
+        y = []
+        for qidx, aidx, label in tqdm(lis_couple, desc='Building feature vector'):
+            x.append(self.data_builder.get_feature_vector(qidx, aidx))
+            y.append(label)
+        return x, y
 
     def start_training(self):
-        pass
+        x, y = self.cook_training_data()
+        print('test')
+
+
+if __name__ == '__main__':
+    model_training = ModelTraining()
+    model_training.start_training()
