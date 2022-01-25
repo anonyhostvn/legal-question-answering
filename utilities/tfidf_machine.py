@@ -8,3 +8,9 @@ class TfIdfMachine:
 
     def get_tfidf(self, idx):
         return self.tf_idf_corpus[idx]
+
+    def transform_corpus(self, corpus):
+        return self.vectorizer.transform(corpus)
+
+    def get_transformed_root_corpus(self):
+        return self.tf_idf_corpus

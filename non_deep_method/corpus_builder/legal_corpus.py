@@ -1,33 +1,19 @@
 import json
-import os
 
 from global_config import LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS
-from non_deep_method.config import LOAD_SAMPLE_SIZE, CACHE_DIR
-from utilities.tfidf_machine import TfIdfMachine
-from utilities.utils import transform_seg2uni, transform_seg2bi, get_wavg_word_emb_with_cached
+from non_deep_method.config import LOAD_SAMPLE_SIZE
+from non_deep_method.corpus_builder.abstract_corpus import AbstractCorpus
 
 
-class LegalCorpus:
+class LegalCorpus(AbstractCorpus):
     def __init__(self, corpus_json_path, corpus_segmented_path, sample_size=None):
-        self.bi_corpus = None
-        self.uni_corpus = None
         with open(corpus_json_path, 'r') as f:
-            self.corpus = json.load(f)[:sample_size]
+            self.json_corpus = json.load(f)[:sample_size]
 
         with open(corpus_segmented_path, 'r') as f:
             self.segmented_corpus = json.load(f)[:sample_size]
 
-        self.uni_corpus = transform_seg2uni(self.segmented_corpus)
-        self.uni_tfidf = TfIdfMachine(self.uni_corpus)
-        self.uni_vocab = self.uni_tfidf.vectorizer.get_feature_names_out()
-
-        self.bi_corpus = transform_seg2bi(self.segmented_corpus)
-        self.bi_tfidf = TfIdfMachine(self.bi_corpus)
-
-    def get_w_avg_word_emb(self, idx: int):
-        cached_filename = os.path.join(CACHE_DIR, f'legal_{idx}.wavg_emb.npy')
-        return get_wavg_word_emb_with_cached(tfidf_score=self.uni_tfidf.get_tfidf(idx), vocab=self.uni_vocab,
-                                             cached_filename=cached_filename)
+        super().__init__(self.json_corpus, self.segmented_corpus)
 
 
 if __name__ == '__main__':
