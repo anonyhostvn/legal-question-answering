@@ -17,12 +17,13 @@ class ModelTraining:
                                                      seg_ques_path=SEGMENTED_DATA_QUESTION)
         self.data_builder = DataBuilder(self.train_ques_corpus, self.legal_corpus)
 
-    def generate_idx_couple(self, lis_qidx, top_n=50):
+    def generate_idx_couple(self, lis_qidx, neg_ratio=5):
         lis_couple = []
         for qidx in tqdm(lis_qidx, desc='Building list of couple'):
             lis_relevant_aidx = self.data_builder.get_relevant_aidx_of_ques(qidx)
-            lis_non_relevant_aidx = [self.data_builder.get_non_relevant_aidx_of_ques(lis_relevant_aidx)
-                                     for i in range(top_n)]
+            lis_non_relevant_aidx = self.data_builder.get_non_relevant_aidx_of_ques_bm25(
+                qidx, lis_relevant_aidx,
+                n_elements=len(lis_relevant_aidx) * neg_ratio)
             for aidx in lis_relevant_aidx:
                 lis_couple.append((qidx, aidx, 1))
             for aidx in lis_non_relevant_aidx:
@@ -33,7 +34,7 @@ class ModelTraining:
         with open(TRAIN_IDX, 'r') as f:
             lis_ques_idx = json.load(f)
 
-        lis_couple = self.generate_idx_couple(lis_ques_idx, top_n=50)
+        lis_couple = self.generate_idx_couple(lis_ques_idx)
 
         x = []
         y = []

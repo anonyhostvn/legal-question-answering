@@ -2,6 +2,7 @@ import random
 
 import numpy as np
 
+from bm25_ranking.bm25_pre_ranking import bm25_ranking
 from global_config import DATA_QUESTION_PATH, SEGMENTED_DATA_QUESTION, LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS
 from non_deep_method.corpus_builder.ftext_machine import ftext_machine
 from non_deep_method.corpus_builder.legal_corpus import LegalCorpus
@@ -33,6 +34,7 @@ class DataBuilder:
         self.pairwise_bi_tfidf = PairwiseTfidf(self.legal_corpus.bi_corpus, self.legal_ques_corpus.bi_corpus)
 
         self.ftext_machine = ftext_machine
+        self.bm25ranking = bm25_ranking
 
     def get_relevant_aidx_of_ques(self, qidx):
         lis_relevant_article = self.legal_ques_corpus.get_lis_relevant_article(qidx)
@@ -43,11 +45,21 @@ class DataBuilder:
     def get_random_aidx(self):
         return random.randint(0, self.legal_corpus.get_len_corpus() - 1)
 
-    def get_non_relevant_aidx_of_ques(self, lis_relevant_aidx):
+    def get_random_non_relevant_aidx_of_ques(self, lis_relevant_aidx):
         random_aidx = self.get_random_aidx()
         while random_aidx in lis_relevant_aidx:
             random_aidx = self.get_random_aidx()
         return random_aidx
+
+    def get_non_relevant_aidx_of_ques_bm25(self, qidx, lis_relevant_aidx, n_elements):
+        lis_bm25_ranking = self.bm25ranking.get_ranking(query_idx=qidx, prefix='train_ques', top_n=n_elements * 2)
+        lis_aidx = []
+        for aidx in lis_bm25_ranking:
+            if aidx not in lis_relevant_aidx:
+                lis_aidx.append(aidx)
+            if len(lis_aidx) >= n_elements:
+                break
+        return lis_aidx
 
     def get_feature_vector(self, ques_idx, corpus_idx):
         cos_uni_tfidf = self.pairwise_uni_tfidf.get_cosine_sim(ques_idx, corpus_idx)
