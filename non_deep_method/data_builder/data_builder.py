@@ -1,5 +1,6 @@
 import numpy as np
 
+from global_config import DATA_QUESTION_PATH, SEGMENTED_DATA_QUESTION, LEGAL_CORPUS_PATH, SEGMENTED_LEGAL_CORPUS
 from non_deep_method.corpus_builder.ftext_machine import ftext_machine
 from non_deep_method.corpus_builder.legal_corpus import LegalCorpus
 from non_deep_method.corpus_builder.legal_question_corpus import LegalQuestionCorpus
@@ -42,3 +43,12 @@ class DataBuilder:
                                                            vocab=self.pairwise_uni_tfidf.get_vocab())
 
         return np.concatenate(([cos_uni_tfidf, cos_bi_tfidf], ques_wemb, corpus_wemb), axis=0)
+
+
+if __name__ == '__main__':
+    train_ques_corpus = LegalQuestionCorpus(json_ques_path=DATA_QUESTION_PATH, seg_ques_path=SEGMENTED_DATA_QUESTION)
+    comp_legal_corpus = LegalCorpus(corpus_json_path=LEGAL_CORPUS_PATH, corpus_segmented_path=SEGMENTED_LEGAL_CORPUS)
+
+    data_builder = DataBuilder(train_ques_corpus, comp_legal_corpus)
+    data_builder.get_feature_vector(ques_idx=0, corpus_idx=0)
+    print('Done !')
