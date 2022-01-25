@@ -13,6 +13,7 @@ TRAIN_IDX = os.path.join('data_spliter', 'train_idx.json')
 TEST_IDX = os.path.join('data_spliter', 'test_idx.json')
 RAW_LEGAL_TEXT_CORPUS_PATH = 'large_files/bert_corpus_path.txt'
 PRETRAIN_BERT_NAME = 'vinai/phobert-base'
+PRETRAIN_BERT_TOKENIZER = 'vinai/phobert-base'
 LEGAL_BERT_MLM = 'legal_bert_checkpoint'
 SENT_BERT_CHECKPOINT = 'sent_bert_checkpoint'
 SENT_BERT_DOWNSTREAM_CHECKPOINT_PATH = 'sent_bert_downstream_checkpoint'

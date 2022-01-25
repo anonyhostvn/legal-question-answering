@@ -13,7 +13,7 @@ import json
 from accelerate import Accelerator
 
 from finetunning_bert.training_utilities import perform_epoch
-from global_config import PRETRAIN_BERT_NAME, RAW_LEGAL_TEXT_CORPUS_PATH, LEGAL_BERT_MLM
+from global_config import PRETRAIN_BERT_NAME, RAW_LEGAL_TEXT_CORPUS_PATH, LEGAL_BERT_MLM, PRETRAIN_BERT_TOKENIZER
 
 
 class ModelTraining:
@@ -24,7 +24,7 @@ class ModelTraining:
         print('save folder: ', self.save_folder)
 
         self.corpus_path = RAW_LEGAL_TEXT_CORPUS_PATH
-        self.tokenizer = AutoTokenizer.from_pretrained(PRETRAIN_BERT_NAME)
+        self.tokenizer = AutoTokenizer.from_pretrained(PRETRAIN_BERT_TOKENIZER)
         self.mlm_bert_model = AutoModelForMaskedLM.from_pretrained(PRETRAIN_BERT_NAME)
         self.mlm_prob = mlm_prob
         self.batch_size = batch_size
@@ -111,9 +111,7 @@ class ModelTraining:
 
 
 if __name__ == '__main__':
-    model_training = ModelTraining(pretrain_name=PRETRAINED_MODEL_NAME, mlm_prob=0.15,
-                                   tokenizer_name=PRETRAINED_MODEL_NAME, corpus_path=BERT_CORPUS_PATH,
+    model_training = ModelTraining(mlm_prob=0.15,
                                    train_idx_path='train_idx.json',
-                                   test_idx_path='test_idx.json',
-                                   save_folder='/Users/LongNH/Workspace/ZaloAIChallenge/finetunning_bert/pretrained_model')
+                                   test_idx_path='test_idx.json')
     model_training.start_training()
