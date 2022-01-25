@@ -8,8 +8,11 @@ import os
 
 
 class ModelBuilder:
-    def __init__(self):
-        self.clf = []
+    def __init__(self, lis_clf=None):
+        if lis_clf is None:
+            self.clf = []
+        else:
+            self.clf = lis_clf
         self.SAVE_LIS_MODEL_PATH = os.path.join('non_deep_method', 'cached', 'lis_xgb.pkl')
 
     def predict_prob(self, X):
