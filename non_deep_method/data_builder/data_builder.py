@@ -51,8 +51,11 @@ class DataBuilder:
             random_aidx = self.get_random_aidx()
         return random_aidx
 
+    def get_bm25_ranking(self, qidx, top_n):
+        return self.bm25ranking.get_ranking(query_idx=qidx, prefix='train_ques', top_n=top_n)
+
     def get_non_relevant_aidx_of_ques_bm25(self, qidx, lis_relevant_aidx, n_elements):
-        lis_bm25_ranking = self.bm25ranking.get_ranking(query_idx=qidx, prefix='train_ques', top_n=n_elements * 2)
+        lis_bm25_ranking = self.get_bm25_ranking(qidx, top_n=n_elements * 2)
         lis_aidx = []
         for aidx in lis_bm25_ranking:
             if aidx not in lis_relevant_aidx:
