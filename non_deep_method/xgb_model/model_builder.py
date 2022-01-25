@@ -1,14 +1,16 @@
 from lightgbm import LGBMClassifier, early_stopping, log_evaluation
 
-from non_deep_method.data_builder.xy_data_builder import data_builder
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import roc_auc_score
 import numpy as np
+import pickle
+import os
 
 
 class ModelBuilder:
     def __init__(self):
         self.clf = []
+        self.SAVE_LIS_MODEL_PATH = os.path.join('non_deep_method', 'cached', 'lis_xgb.pkl')
 
     def predict_prob(self, X):
         pred_prob = np.array([single_clf.predict_proba(X=X)[:, 1] for single_clf in self.clf])
@@ -22,18 +24,20 @@ class ModelBuilder:
 
     def base_model(self):
         return LGBMClassifier(n_jobs=4,
-                              n_estimators=4000,
+                              n_estimators=4096,
                               learning_rate=0.02,
-                              num_leaves=34,
-                              colsample_bytree=0.9497036,
-                              subsample=0.8715623,
-                              max_depth=8,
-                              reg_alpha=0.041545473,
-                              reg_lambda=0.0735294,
-                              min_split_gain=0.0222415,
-                              min_child_weight=39.3259775,
+                              colsample_bytree=1.0,
+                              subsample=1.0,
+                              # max_depth=16,
+                              # reg_alpha=0.041545473,
+                              # reg_lambda=0.0735294,
+                              # min_split_gain=0.0222415,
+                              # min_child_weight=39.3259775,
                               verbose=-1,
-                              # scale_pos_weight=10
+                              scale_pos_weight=5,
+                              # num_iterations=1024,
+                              num_leaves=128,
+                              max_bins=512
                               )
 
     def train_single_model(self, X, y):
@@ -42,7 +46,7 @@ class ModelBuilder:
         x_train, x_val, y_train, y_val = train_test_split(X, y, test_size=0.2)
         single_clf = self.base_model()
         single_clf.fit(x_train, y_train, eval_set=[(x_train, y_train), (x_val, y_val)],
-                       callbacks=[early_stopping(stopping_rounds=200), log_evaluation(period=200)],
+                       callbacks=[early_stopping(stopping_rounds=200), log_evaluation(period=100)],
                        eval_metric='auc')
         self.clf.append(single_clf)
 
@@ -57,20 +61,7 @@ class ModelBuilder:
             y_train = y[train_index]
             y_val = y[val_index]
             single_clf.fit(x_train, y_train, eval_set=[(x_train, y_train), (x_val, y_val)],
-                           callbacks=[early_stopping(stopping_rounds=200), log_evaluation(period=400)],
+                           callbacks=[early_stopping(stopping_rounds=200), log_evaluation(period=100)],
                            eval_metric='auc')
             self.clf.append(single_clf)
-
-
-if __name__ == '__main__':
-    top_n = 50
-    train_x, train_y = data_builder.build_data_with_features(top_n=top_n, phase='train_phase',
-                                                             prefix='train_ques')
-    test_x, test_y = data_builder.build_data_with_features(top_n=top_n, phase='test_phase',
-                                                           prefix='train_ques')
-    model_builder = ModelBuilder()
-
-    model_builder.train_single_model(X=train_x, y=train_y)
-    # model_builder.train_k_fold(X=train_x, y=train_y)
-
-    model_builder.test(X=test_x, y=test_y)
+        pickle.dump(self.clf, open(self.SAVE_LIS_MODEL_PATH, 'wb'))

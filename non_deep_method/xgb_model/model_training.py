@@ -10,14 +10,17 @@ from non_deep_method.data_builder.data_builder import DataBuilder
 import numpy as np
 import os
 
+from non_deep_method.xgb_model.model_builder import ModelBuilder
+
 
 class ModelTraining:
-    def __init__(self):
-        self.legal_corpus = LegalCorpus(corpus_json_path=LEGAL_CORPUS_PATH,
-                                        corpus_segmented_path=SEGMENTED_LEGAL_CORPUS)
-        self.train_ques_corpus = LegalQuestionCorpus(json_ques_path=DATA_QUESTION_PATH,
-                                                     seg_ques_path=SEGMENTED_DATA_QUESTION)
-        self.data_builder = DataBuilder(self.train_ques_corpus, self.legal_corpus)
+    def __init__(self, is_build=True):
+        if is_build:
+            self.legal_corpus = LegalCorpus(corpus_json_path=LEGAL_CORPUS_PATH,
+                                            corpus_segmented_path=SEGMENTED_LEGAL_CORPUS)
+            self.train_ques_corpus = LegalQuestionCorpus(json_ques_path=DATA_QUESTION_PATH,
+                                                         seg_ques_path=SEGMENTED_DATA_QUESTION)
+            self.data_builder = DataBuilder(self.train_ques_corpus, self.legal_corpus)
         self.SAVE_X_PATH = os.path.join('large_files', 'train_x.npy')
         self.SAVE_Y_PATH = os.path.join('large_files', 'train_y.npy')
 
@@ -55,10 +58,11 @@ class ModelTraining:
     def start_training(self):
         x = np.load(self.SAVE_X_PATH)
         y = np.load(self.SAVE_Y_PATH)
-        pass
+        model_builder = ModelBuilder()
+        model_builder.train_k_fold(X=x, y=y)
 
 
 if __name__ == '__main__':
-    model_training = ModelTraining()
-    model_training.start_generate()
-    # model_training.start_training()
+    model_training = ModelTraining(is_build=False)
+    # model_training.start_generate()
+    model_training.start_training()
