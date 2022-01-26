@@ -47,8 +47,9 @@ class ModelEvaluation:
                 sum_precision += precision
 
                 # sum_f2score += calculate_f2i(lis_predict=predict_aidx, lis_ground_truth=gtruth_aidx)
-            print('Threshold = ', threshold, 'f2score = ', sum_f2score / len(test_result),
-                  'recall = ', sum_recall / len(test_result),
+            print('Threshold = ', threshold, ' | ',
+                  'f2score = ', sum_f2score / len(test_result), ' | ',
+                  'recall = ', sum_recall / len(test_result), ' | ',
                   'precision = ', sum_precision / len(test_result))
 
     def start_evaluate(self):
