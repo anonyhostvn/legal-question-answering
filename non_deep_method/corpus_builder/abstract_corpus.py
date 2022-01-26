@@ -11,6 +11,9 @@ class AbstractCorpus(metaclass=ABCMeta):
         self.uni_corpus = transform_seg2uni(self.seg_corpus)
         self.bi_corpus = transform_seg2bi(self.seg_corpus)
 
+    def get_uni_corpus(self, idx):
+        return self.uni_corpus[idx]
+
     @abstractmethod
     def get_len_corpus(self):
         pass

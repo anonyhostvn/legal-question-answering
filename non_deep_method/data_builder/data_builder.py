@@ -25,13 +25,23 @@ class PairwiseTfidf:
         return self.tf_idf_machine.vectorizer.get_feature_names_out()
 
 
+def calculate_jaccard_sim(x, y):
+    cnt = 0
+    for ix in x:
+        if ix in y:
+            cnt += 1
+    return cnt / (len(x) + len(y) - cnt)
+
+
 class DataBuilder:
     def __init__(self, legal_ques_corpus: LegalQuestionCorpus, legal_corpus: LegalCorpus):
         self.legal_ques_corpus = legal_ques_corpus
         self.legal_corpus = legal_corpus
 
-        self.pairwise_uni_tfidf = PairwiseTfidf(self.legal_corpus.uni_corpus, self.legal_ques_corpus.uni_corpus)
-        self.pairwise_bi_tfidf = PairwiseTfidf(self.legal_corpus.bi_corpus, self.legal_ques_corpus.bi_corpus)
+        self.pairwise_uni_tfidf = PairwiseTfidf(legal_corpus=self.legal_corpus.uni_corpus,
+                                                ques_corpus=self.legal_ques_corpus.uni_corpus)
+        self.pairwise_bi_tfidf = PairwiseTfidf(legal_corpus=self.legal_corpus.bi_corpus,
+                                               ques_corpus=self.legal_ques_corpus.bi_corpus)
 
         self.ftext_machine = ftext_machine
         self.bm25ranking = bm25_ranking
@@ -73,8 +83,10 @@ class DataBuilder:
                                                          vocab=self.pairwise_uni_tfidf.get_vocab())
         corpus_wemb = self.ftext_machine.get_wavg_word_emb(tfidf_score=legal_uni_tfidf,
                                                            vocab=self.pairwise_uni_tfidf.get_vocab())
+        jaccard_sim = calculate_jaccard_sim(self.legal_ques_corpus.get_uni_corpus(ques_idx).split(' '),
+                                            self.legal_corpus.get_uni_corpus(corpus_idx).split(' '))
 
-        return np.concatenate(([cos_uni_tfidf, cos_bi_tfidf], ques_wemb, corpus_wemb), axis=0)
+        return np.concatenate(([jaccard_sim, cos_uni_tfidf, cos_bi_tfidf], ques_wemb, corpus_wemb), axis=0)
 
 
 if __name__ == '__main__':
