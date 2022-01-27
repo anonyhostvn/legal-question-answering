@@ -11,7 +11,7 @@ from non_deep_method.corpus_builder.legal_question_corpus import LegalQuestionCo
 from non_deep_method.data_builder.data_builder import DataBuilder
 import pickle
 
-from non_deep_method.evaluation.eval_utils import calculate_f2i, calculate_f2i_spec
+from non_deep_method.evaluation.eval_utils import calculate_f2i_spec
 from non_deep_method.xgb_model.model_builder import ModelBuilder
 
 

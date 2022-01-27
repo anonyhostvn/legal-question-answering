@@ -1,5 +1,6 @@
 import os
 
+STOP_WORD_PATH = os.path.join('large_files', 'vietnamese-stopwords.txt')
 LEGAL_CORPUS_PATH = os.path.join('zac2021-ltr-data', 'legal_corpus.json')
 DATA_QUESTION_PATH = os.path.join('zac2021-ltr-data', 'train_question_answer.json')
 TEST_QUESTION_PATH = os.path.join('zac2021-ltr-data', 'public_test_question.json')
