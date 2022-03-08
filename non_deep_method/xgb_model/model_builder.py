@@ -27,10 +27,10 @@ class ModelBuilder:
 
     def base_model(self):
         return LGBMClassifier(n_jobs=4,
-                              n_estimators=4096,
+                              n_estimators=8192,
                               learning_rate=0.02,
-                              colsample_bytree=1.0,
-                              subsample=1.0,
+                              colsample_bytree=0.9,
+                              subsample=0.9,
                               # max_depth=16,
                               # reg_alpha=0.041545473,
                               # reg_lambda=0.0735294,
@@ -39,7 +39,7 @@ class ModelBuilder:
                               verbose=-1,
                               scale_pos_weight=5,
                               # num_iterations=1024,
-                              num_leaves=128,
+                              num_leaves=256,
                               max_bins=512
                               )
 
@@ -54,15 +54,19 @@ class ModelBuilder:
         self.clf.append(single_clf)
 
     def train_k_fold(self, X, y):
-        skf = StratifiedKFold(n_splits=6)
+        skf = StratifiedKFold(n_splits=6, shuffle=True, random_state=42)
         self.clf = []
         for fold_id, (train_index, val_index) in enumerate(skf.split(X=X, y=y)):
-            print('Start training fold: ', fold_id)
             single_clf = self.base_model()
+            print(val_index)
             x_train = X[train_index]
             x_val = X[val_index]
             y_train = y[train_index]
             y_val = y[val_index]
+            print('Start training fold: ', fold_id)
+            print(' number of positive training examples: ', sum(y_train))
+            print('total number of validation examples: ', len(x_val))
+            print('number of positive validation examples: ', sum(y_val))
             single_clf.fit(x_train, y_train, eval_set=[(x_train, y_train), (x_val, y_val)],
                            callbacks=[early_stopping(stopping_rounds=200), log_evaluation(period=100)],
                            eval_metric='auc')

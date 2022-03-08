@@ -3,6 +3,8 @@ import os
 from random import shuffle
 import json
 
+from finetunning_bert.const import CORPUS_PATH, BERT_CORPUS_PATH, TRAIN_IDX_PATH, TEST_IDX_PATH
+
 
 class DataPreprocess:
     def __init__(self, max_seq_length):
@@ -16,7 +18,8 @@ class DataPreprocess:
         with open(output_path, 'w') as bert_corpus_file:
             self.output_file = bert_corpus_file
             for article in tqdm(segmented_corpus):
-                self.process_article(article)
+                if article is not None:
+                    self.process_article(article)
 
     def write_text_output(self, txt):
         assert self.output_file is not None
@@ -93,8 +96,9 @@ def train_test_split_idx(corpus_path, train_idx_path, test_idx_path, test_size=0
 
 
 if __name__ == '__main__':
+    MAX_PHOBERT_SEQ_LENGTH = 256
     # data_preprocess = DataPreprocess(max_seq_length=MAX_PHOBERT_SEQ_LENGTH)
     # data_preprocess.start_make_bert_corpus(corpus_path=CORPUS_PATH, output_path=BERT_CORPUS_PATH)
     # data_preprocess.test_preprocess(bert_corpus_path=BERT_CORPUS_PATH)
-    # train_test_split_idx(corpus_path=BERT_CORPUS_PATH, train_idx_path=TRAIN_IDX_PATH, test_idx_path=TEST_IDX_PATH)
+    train_test_split_idx(corpus_path=BERT_CORPUS_PATH, train_idx_path=TRAIN_IDX_PATH, test_idx_path=TEST_IDX_PATH)
     pass

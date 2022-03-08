@@ -70,6 +70,6 @@ class ModelEvaluation:
 
 
 if __name__ == '__main__':
-    model_eval = ModelEvaluation(is_build=False)
-    # model_eval.start_evaluate()
+    model_eval = ModelEvaluation(is_build=True)
+    model_eval.start_evaluate()
     model_eval.start_choosing_threshold()

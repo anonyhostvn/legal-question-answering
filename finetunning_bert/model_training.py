@@ -1,8 +1,7 @@
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
-from transformers import AutoModelForMaskedLM, AutoTokenizer, get_scheduler
+from transformers import AutoModelForMaskedLM, AutoTokenizer, get_scheduler, AutoConfig
 
-from finetunning_bert.const import PRETRAINED_MODEL_NAME, BERT_CORPUS_PATH
 import torch
 
 import numpy as np
@@ -25,6 +24,7 @@ class ModelTraining:
 
         self.corpus_path = RAW_LEGAL_TEXT_CORPUS_PATH
         self.tokenizer = AutoTokenizer.from_pretrained(PRETRAIN_BERT_TOKENIZER)
+        self.bert_config = AutoConfig.from_pretrained(PRETRAIN_BERT_TOKENIZER)
         self.mlm_bert_model = AutoModelForMaskedLM.from_pretrained(PRETRAIN_BERT_NAME)
         self.mlm_prob = mlm_prob
         self.batch_size = batch_size
@@ -76,7 +76,7 @@ class ModelTraining:
 
     def collate_fn_dataloader(self, batch):
         tokenizer_output = self.tokenizer(batch, padding='max_length', truncation='only_first',
-                                          return_tensors='pt')
+                                          max_length=self.bert_config.max_position_embeddings, return_tensors='pt')
         data_tokenize_with_mlm = self.custom_data_collator(tokenizer_output)
         return data_tokenize_with_mlm
 
